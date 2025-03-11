@@ -1,0 +1,14 @@
+{
+  "name": "event-client-lib",
+  "version": "1.0.0",
+  "description": "Client Module for Event Server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Daniel Svenberg",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "ws": "^8.18.1"
+  }
+}

@@ -1,0 +1,71 @@
+@import 'colors';
+$buttonSize: 2.4rem;
+
+#content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#content-playlist {
+    width: 95%;
+    height: 95%;
+    // background-color: pink;
+
+    display: grid;
+    grid-template-areas: 
+        "backbutton space url space2 sorting"
+        "space3 playlist playlist playlist space4";
+    grid-template-columns: 2fr 1fr 66% 1fr 2fr;
+    grid-template-rows: $buttonSize auto;
+
+    #url-section {
+        grid-area: url;
+        width: 100%;
+        max-width: 50rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        
+        height: $buttonSize;
+
+        * {
+            width: $buttonSize;
+            height: 100%;
+            background-color: rgba(darken($main, 6%), 0.8);
+            color: rgba($secondary, 0.5);
+            border: 0;
+            border-radius: 4px;
+            transition: background-color 115ms ease-in-out;
+        }
+
+        #url-input {
+            width: calc(94% - 26px - (2*$buttonSize));
+
+            padding: 0 13px;
+
+            font-family: 'Open Sans', 'Roboto', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 300;
+        }
+
+        button {
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            svg {
+                background-color: transparent;
+                height: calc($buttonSize * 0.6);
+            }
+
+            &:hover {
+                cursor: pointer;
+                background-color: rgba(darken($main, 10%), 0.8);
+                color: rgba($contrast, 0.8);
+            }
+        }
+    }
+}

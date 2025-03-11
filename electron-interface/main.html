@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Knoblin</title>
+    <link rel="stylesheet" href="./styles/compiled/global.css">
+    <link rel="stylesheet" href="./styles/compiled/main.css">
+    <link rel="stylesheet" href="./styles/compiled/control.css">
+</head>
+<body>
+    <menu id="top-menu" class="drag-area">
+        <div id="logo" class="drag-area">
+            <h1>Knoblin</h1>
+        </div>
+        <!-- Icons made by Flux Icons: https://github.com/doc88git/flux-icon -->
+        <div id="menu-options" class="drag-area">
+            <button id="pin-button" class="no-drag">
+                <svg id="pin-16px" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                    <path fill="currentColor" id="Path_61" data-name="Path 61" d="M-7.146,7.146l-7-7a.5.5,0,0,0-.545-.108A.5.5,0,0,0-15,.5V3.293L-17.707,6H-22.5a.5.5,0,0,0-.462.309.5.5,0,0,0,.108.545L-18.707,11l-4.147,4.146a.5.5,0,0,0,0,.708A.5.5,0,0,0-22.5,16a.5.5,0,0,0,.354-.146L-18,11.707l4.146,4.147A.5.5,0,0,0-13.5,16a.489.489,0,0,0,.191-.038A.5.5,0,0,0-13,15.5V10.707L-10.293,8H-7.5a.5.5,0,0,0,.462-.309A.5.5,0,0,0-7.146,7.146ZM-10.5,7a.5.5,0,0,0-.354.146l-3,3A.5.5,0,0,0-14,10.5v3.793L-21.293,7H-17.5a.5.5,0,0,0,.354-.146l3-3A.5.5,0,0,0-14,3.5V1.707L-8.707,7Z" transform="translate(23 0)"/>
+                </svg>
+            </button>
+            <button id="minimize-button" class="no-drag">
+                <svg id="minus-16px" xmlns="http://www.w3.org/2000/svg" width="16" height="1" viewBox="0 0 16 1">
+                    <path fill="currentColor" id="Path_70" data-name="Path 70" d="M37.5,4h-15a.5.5,0,0,1,0-1h15a.5.5,0,0,1,0,1Z" transform="translate(-22 -3)"/>
+                </svg>
+            </button>
+            <button id="close-button" class="no-drag">
+                <svg fill="#000000" width="800px" height="800px" viewBox="0 0 16.001 16.001" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="currentColor" id="Path_9" data-name="Path 9" d="M33.707,8,40.854.854a.5.5,0,0,0-.708-.708L33,7.293,25.854.146a.5.5,0,0,0-.708.708L32.293,8l-7.147,7.146a.5.5,0,0,0,.708.708L33,8.707l7.146,7.147a.5.5,0,0,0,.708-.708Z" transform="translate(-25 0)"/>
+                </svg>
+            </button>
+        </div>
+    </menu>
+    <div id="container">
+
+        <aside id="nav">
+            <div class="vertical-divider" id="navVerticalDivider"></div>
+        </aside>
+        <main id="content">
+
+        </main>
+        <footer id="control">
+            <div class="horizontal-divider" id="controlHorizontalDivider"></div>
+            <div id="control-container">
+                <div class="control-segment" id="control-ambience">
+                    <h2>Ambience</h2>
+                    <div class="volume-wrapper">
+                        <input class="volume-slider" id="volume-slider-main" type="range" min="0" max="100" value="50" orient="vertical">
+                    </div>
+                </div>
+                <div class="control-segment expanded" id="control-music">
+                    <h2>Music</h2>
+                    <div class="volume-wrapper expanded">
+                        <input class="volume-slider" id="volume-slider-main" type="range" min="0" max="100" value="50" orient="vertical">
+                    </div>
+                </div>
+                <div class="control-segment" id="control-sfx">
+                    <h2>Sfx</h2>
+                    <div class="volume-wrapper">
+                        <input class="volume-slider" id="volume-slider-main" type="range" min="0" max="100" value="50" orient="vertical">
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <div class="corner-divider" id="navControlCornerDivider"></div>
+    </div>
+
+    <script src="./main.js"></script>
+</body>
+</html>

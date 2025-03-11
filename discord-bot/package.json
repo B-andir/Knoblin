@@ -1,0 +1,32 @@
+{
+  "name": "knoblin-discord-bot",
+  "version": "1.0.0",
+  "description": "Discord bot module for Knoblin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "update-commands": "node ./utility/deploy-commands-testing.js",
+    "update-commands-global": "node ./utility/deploy-commands-global.js"
+  },
+  "keywords": [
+    "Discord",
+    "Bot",
+    "Discordjs",
+    "Music"
+  ],
+  "author": "Daniel Svenberg",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "@discordjs/opus": "^0.10.0",
+    "@discordjs/voice": "^0.18.0",
+    "@distube/ytdl-core": "^4.16.4",
+    "discord.js": "^14.18.0",
+    "dotenv": "^16.4.7",
+    "ffmpeg-static": "^5.2.0",
+    "http": "^0.0.1-security",
+    "sodium-native": "^4.3.3",
+    "event-client-lib": "file:../event-client-lib"
+  }
+}

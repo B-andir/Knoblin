@@ -1,0 +1,38 @@
+{
+  "name": "knoblin",
+  "version": "1.0.0",
+  "description": "Music and Audio Discord Bot and Control Interface",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently --kill-others --success first \"npm run start:electron\" \"npm run start:discord\" \"npm run start:event\"",
+    "dev": "concurrently --kill-others --success first \"npm run dev:electron\" \"npm run dev:discord\" \"npm run dev:event\"",
+    "start:electron": "cd electron-interface && npm run start",
+    "start:discord": "cd discord-bot && npm run start",
+    "start:event": "cd event-server && npm run start",
+    "dev:electron": "cd electron-interface && npm run dev",
+    "dev:discord": "cd discord-bot && npm run dev",
+    "dev:event": "cd event-server && npm run dev",
+    "update-commands": "cd discord-bot && npm run update-commands",
+    "update-commands-global": "cd discord-bot && npm run update-commands-global",
+    "update-packages": "cd discord-bot && npm i && cd ../electron-interface && npm i && ../cd event-server && npm i"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/B-andir/Knoblin.git"
+  },
+  "author": "Daniel Svenberg",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/B-andir/Knoblin/issues"
+  },
+  "homepage": "https://github.com/B-andir/Knoblin#readme",
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "nodemon": "^3.1.9"
+  },
+  "dependencies": {
+    "@serialport/parser-readline": "^13.0.0",
+    "serialport": "^13.0.0"
+  }
+}

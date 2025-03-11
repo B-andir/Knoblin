@@ -1,0 +1,23 @@
+@import 'colors', 'fonts';
+
+html {
+    font-family: 'Roboto', sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings: 
+        "wdth" 100;
+    
+}
+
+body {
+    background-color: $main;
+    color: $secondary;
+}
+
+.drag-area {
+    -webkit-app-region: drag;
+
+    .no-drag {
+        -webkit-app-region: no-drag;
+    }
+}
