@@ -1,18 +1,27 @@
-const {app, BrowserWindow, net, ipcMain } = require('electron');
+const {app, BrowserWindow, screen } = require('electron');
 const path = require('path');
 const settings = require('electron-settings');
 const { setupIPCs } = require('./utility/ipcHandler');
 
-const savedBounds = settings.hasSync('windowBounds')
-    ? settings.getSync('windowBounds')
-    : { width: 800, height: 600 };
-
 function createWindow() {
+    // Retrieve the saved window bounds
+    const savedBounds = settings.getSync('windowBounds') || { x: undefined, y: undefined, width: 1000, height: 600 };
+    
+    let adjustedWidth = savedBounds.width;
+    let adjustedHeight = savedBounds.height;
+
+    // Rescale the window to fit display's scale factor as compared to primary monitor
+    if (savedBounds.scaleFactor) {
+        const factor = screen.getPrimaryDisplay().scaleFactor / savedBounds.scaleFactor;
+        adjustedWidth = Math.round(savedBounds.width * factor);
+        adjustedHeight = Math.round(savedBounds.height * factor);
+    }
+
     const mainWindow = new BrowserWindow({
         x: savedBounds.x,
         y: savedBounds.y,
-        width: savedBounds.width,
-        height: savedBounds.height,
+        width: adjustedWidth,
+        height: adjustedHeight,
         minWidth: 800,
         minHeight: 500,
         frame: false,  // Removes all built-in menu options, including close and minimize
@@ -26,7 +35,12 @@ function createWindow() {
     mainWindow.loadFile(path.join(__dirname, 'main.html'));
 
     mainWindow.on('close', () => {
-        settings.setSync('windowBounds', mainWindow.getBounds());
+        const bounds = mainWindow.getBounds();
+        const display = screen.getDisplayMatching(bounds);
+        settings.setSync('windowBounds', {
+            ...bounds,
+            scaleFactor: display.scaleFactor,
+        });
     });
 
     setupIPCs(mainWindow);
