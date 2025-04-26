@@ -56,4 +56,4 @@ class PlaylistManager {
     }
 }
 
-module.exports = {}
+module.exports = PlaylistManager;
