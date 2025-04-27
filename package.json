@@ -15,7 +15,7 @@
     "dev:event": "cd event-server && npm run dev",
     "update-commands": "cd discord-bot && npm run update-commands",
     "update-commands-global": "cd discord-bot && npm run update-commands-global",
-    "update-packages": "cd discord-bot && npm i && cd ../electron-interface && npm i && ../cd event-server && npm i"
+    "update-packages": "cd discord-bot && npm i && cd ../electron-interface && npm i && cd ../event-server && npm i"
   },
   "repository": {
     "type": "git",
