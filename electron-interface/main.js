@@ -239,6 +239,25 @@ function changeSelectedSection(element) {
 }
 
 
+// -----<  Navigation Bar Functionality  >-----
+
+// Data Get/Send
+window.api.onPlaylistsLoaded(data => {
+    console.log('Playlists Data Loaded: ', data);
+});
+
+window.api.onPlaylistsUpdated(data => {
+    console.log('Playlists Data Updated: ', data);
+});
+
+function createNewPlaylist(name) {
+    window.api.createNewPlaylist(name);
+}
+
+function removePlaylist(id) {
+    window.api.removePlaylist(id);
+}
+
 // Adjust main volume
 window.api.onBackendEvent('new-volume-main', (data) => {
     const mainVolumeSlider = document.getElementById('volume-slider-main');

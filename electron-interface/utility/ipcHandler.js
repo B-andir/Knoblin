@@ -1,4 +1,5 @@
 const { app, ipcMain } = require('electron')
+const playlistManager = require('./playlists/playlistManager');
 const ytdl = require('@distube/ytdl-core');
 const events = require('event-client-lib');
 
@@ -48,6 +49,18 @@ module.exports = { setupIPCs: (window) => {
 
         return newState
     });
+
+    // ----< Playlists Navigation >----
+
+    // This would require sanitisation if it were a public project.
+    ipcMain.on('create-new-playlist', async (event, name) => {
+        name = name.length == 0 ? "New Playlist" : name
+        playlistManager.createPlaylist(name);
+    });
+
+    ipcMain.on('remove-playlist', async (event, id) => {
+        playlistManager.removePlaylist(id);
+    })
 
     // ----<  Control Bar  >----
     

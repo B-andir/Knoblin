@@ -21,12 +21,12 @@
   "dependencies": {
     "@discordjs/opus": "^0.10.0",
     "@discordjs/voice": "^0.18.0",
-    "@distube/ytdl-core": "^4.16.4",
+    "@distube/ytdl-core": "^4.16.9",
     "discord.js": "^14.18.0",
     "dotenv": "^16.4.7",
+    "event-client-lib": "file:../event-client-lib",
     "ffmpeg-static": "^5.2.0",
     "http": "^0.0.1-security",
-    "sodium-native": "^4.3.3",
-    "event-client-lib": "file:../event-client-lib"
+    "sodium-native": "^4.3.3"
   }
 }

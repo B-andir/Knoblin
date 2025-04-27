@@ -2,6 +2,7 @@ const {app, BrowserWindow, screen } = require('electron');
 const path = require('path');
 const settings = require('electron-settings');
 const { setupIPCs } = require('./utility/ipcHandler');
+const playlistManager = require('./utility/playlists/playlistManager');
 
 function createWindow() {
     // Retrieve the saved window bounds
@@ -34,6 +35,10 @@ function createWindow() {
 
     mainWindow.loadFile(path.join(__dirname, 'main.html'));
 
+    mainWindow.webContents.once('did-finish-load', () => {
+        mainWindow.webContents.send('playlists-loaded', playlistManager.getPlaylists())
+    })
+
     mainWindow.on('close', () => {
         const bounds = mainWindow.getBounds();
         const display = screen.getDisplayMatching(bounds);
@@ -46,7 +51,8 @@ function createWindow() {
     setupIPCs(mainWindow);
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+    await playlistManager.loadPlaylistsData();
     createWindow();
 })
 

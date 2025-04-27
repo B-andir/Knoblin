@@ -1,11 +1,13 @@
-const events = require('event-client-lib')
+const events = require('event-client-lib');
+const { v4: uuidv4 } = require('uuid');
 
-class PlaylistManager {
-    constructor(layer, name, playlistType) {
+class Playlist {
+    constructor(name, layer = 0, playlistType = PlaylistTypes.Playlist) {
+        this.id = uuidv4();
         this.isPlaying = false;
         this.repeat = false;
         this.shuffle = false;
-        this.type = PlaylistTypes[playlistType] || PlaylistTypes.Playlist;
+        this.type = PlaylistTypes[playlistType];
         this.layer = layer;
         this.name = name;
         this.playlist = [];
@@ -56,4 +58,4 @@ class PlaylistManager {
     }
 }
 
-module.exports = {}
+module.exports = Playlist;
