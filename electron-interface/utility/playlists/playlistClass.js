@@ -2,12 +2,12 @@ const events = require('event-client-lib');
 const { v4: uuidv4 } = require('uuid');
 
 class Playlist {
-    constructor(name, layer = 0, playlistType = PlaylistTypes.Playlist) {
+    constructor(name, layer = 0, playlistType = Playlist.PlaylistTypes.Playlist) {
         this.id = uuidv4();
         this.isPlaying = false;
         this.repeat = false;
         this.shuffle = false;
-        this.type = PlaylistTypes[playlistType];
+        this.type = Playlist.PlaylistTypes[playlistType];
         this.layer = layer;
         this.name = name;
         this.playlist = [];
