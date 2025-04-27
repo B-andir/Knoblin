@@ -1,0 +1,105 @@
+@import '../colors';
+
+#navigation-playlistsNav {
+    margin-top: 5px;
+    width: 100%;
+    height: 100%;
+}
+
+#navigation-playlistsContainer {
+    width: 95%;
+    margin-top: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.playlistEntry {
+    height: 1.4rem;
+    width: 100%;
+    display: grid;
+    grid-template-areas: "icon name actions";
+    grid-template-columns: 1.5rem auto 1.2rem;
+    grid-template-rows: 1.4rem;
+
+    .playlistIcon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .circle {
+            width: 0.35rem;
+            height: 0.35rem;
+            display: block;
+            border-radius: 50%;
+            background-color: pink;
+            box-shadow: 0px 2px 2px 1px rgba(0,0,0,0);
+            transition: width ease 100ms, height ease 100ms, box-shadow ease 200ms, border-radius ease 100ms;
+        
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+
+    .playlistName {
+        font-size: 1rem;
+        font-weight: 300;
+        letter-spacing: 0.013rem;
+        color: rgba($secondary, 0.6);
+        overflow-x: hidden;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: start;
+        text-align: center;
+        transition: color ease-out 100ms;
+    }
+
+    .playlistActions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        svg {
+            color: rgba(darken($main, 10), 0.8);
+            height: 90%;
+            transform: scaleX(1.12) scaleY(0.88);
+            box-shadow: 0px 0px 3px 0px rgba(0,0,0,0);
+            transition: color ease-out 185ms, box-shadow ease-out 170ms;
+        }
+
+        &:hover {
+            cursor: pointer;
+
+            svg {
+                color: $contrast !important;
+                box-shadow: 0px 0px 7px 1px rgba(0,0,0,0.3);
+            }
+        }
+    }
+
+    &:hover {
+        .playlistIcon .circle {
+            width: 0.42rem;
+            height: 0.42rem;
+            border-radius: 35%;
+            box-shadow: 1px 2px 2px 1px rgba(0,0,0,0.4);
+        }
+
+        .playlistName {
+            color: $secondary;
+        }
+
+        .playlistActions svg {
+            color: darken($secondary, 14);
+        }
+    }
+
+    &.active {
+        .playlistName {
+            color: $contrast !important;
+        }
+    }
+}
