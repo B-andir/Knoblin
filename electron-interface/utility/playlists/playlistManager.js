@@ -12,7 +12,6 @@ async function loadPlaylistsData() {
     try {
         const contents = await fs.readFile(dataFilePath, 'utf-8');
         playlists = JSON.parse(contents);
-        console.log('Data loaded:', data);
     } catch (err) {
         if (err.code === 'ENOENT') {
             // File doesn't exist yet; initialize with defaults
@@ -29,7 +28,7 @@ async function loadPlaylistsData() {
 async function updateFrontend() {
     // Broadcast new playlists to all renderer windows
     BrowserWindow.getAllWindows().forEach(win => {
-        win.webContents.send('playlists-updated', playlists);
+        win.webContents.send('playlists-updated', { playlists });
     });
 }
 
@@ -49,7 +48,21 @@ function createPlaylist(name) {
     savePlaylistsData();
 }
 
-function removePlaylist(id) {
+function createPlaylistFromObject(playlistObj, name = null) {
+    let newPlaylist = new Playlist(name || playlistObj.name, playlistObj.color || null, playlistObj.layer, playlistObj.type, playlistObj.playlist);
+    playlists.push(newPlaylist);
+    savePlaylistsData();
+}
+
+function renamePlaylist(id, newName) {
+    const index = playlists.findIndex(item => item.id === id);
+    if (index !== -1) {
+        playlists[index].name = newName;
+        savePlaylistsData();
+    }
+}
+
+function deletePlaylist(id) {
     const index = playlists.findIndex(item => item.id === id);
     if (index !== -1) {
         playlists.splice(index, 1);
@@ -57,8 +70,15 @@ function removePlaylist(id) {
     }
 }
 
+function duplicatePlaylist(id, name) {
+    const index = playlists.findIndex(item => item.id === id);
+    if (index !== -1) {
+        createPlaylistFromObject(playlists[index], name);
+    }
+}
+
 function getPlaylists() {
     return playlists;
 }
 
-module.exports = { createPlaylist, removePlaylist, getPlaylists, loadPlaylistsData }
+module.exports = { createPlaylist, duplicatePlaylist, renamePlaylist, deletePlaylist, getPlaylists, loadPlaylistsData }

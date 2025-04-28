@@ -1,5 +1,5 @@
 function loadThisScript() {
-    document.removeEventListener('module-loaded', loadThisScript)
+    document.removeEventListener('content-module-loaded', loadThisScript)
     
     const submitUrlButton = document.getElementById('submit-url-button');
     if (submitUrlButton) submitUrlButton.addEventListener('click', handleUrlSubmit);
@@ -24,7 +24,7 @@ if (document.getElementById('playlist-module-load-checker')) {
     loadThisScript();
 } else {
     // Otherwise, listen for the custom event
-    document.addEventListener('module-loaded', loadThisScript);
+    document.addEventListener('content-module-loaded', loadThisScript);
 }
 
 // Cleanup

@@ -14,7 +14,13 @@ contextBridge.exposeInMainWorld('api', {
 
     onPlaylistsUpdated: (callback) => ipcRenderer.on('playlists-updated', (event, data) => callback(data)),
 
+    onPlaylistsFetchResponse: (callback) => ipcRenderer.on('loaded-playlists', (event, data) => callback(data)),
+
+    fetchPlaylists: () => ipcRenderer.send('fetch-playlists'),
+
     createNewPlaylist: (name) => ipcRenderer.send('create-new-playlist', name),
 
-    removePlaylist: (id) => ipcRenderer.send('remove-playlist', id),
+    renamePlaylist: (id, newName) => ipcRenderer.send('rename-playlst', { id, newName }),
+
+    deletePlaylist: (id) => ipcRenderer.send('delete-playlist', id),
 });

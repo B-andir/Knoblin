@@ -2,15 +2,16 @@ const events = require('event-client-lib');
 const { v4: uuidv4 } = require('uuid');
 
 class Playlist {
-    constructor(name, layer = 0, playlistType = Playlist.PlaylistTypes.Playlist) {
+    constructor(name = "New Playlist", color = null, layer = 0, playlistType = Playlist.PlaylistTypes.Playlist, playlist = []) {
         this.id = uuidv4();
-        this.isPlaying = false;
+        this.name = name;
+        this.color = color;
+        this.layer = layer;
+        this.type = Playlist.PlaylistTypes[playlistType];
+        this.playlist = playlist;
         this.repeat = false;
         this.shuffle = false;
-        this.type = Playlist.PlaylistTypes[playlistType];
-        this.layer = layer;
-        this.name = name;
-        this.playlist = [];
+        this.isPlaying = false;
 
         events.on('trackFinished', (payload) => {
             if (this.isPlaying && payload.layer == this.layer) {

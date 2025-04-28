@@ -153,7 +153,7 @@ function loadModuleHTML(moduleName, moduleType) {
         })
         .then(htmlContent => {
             container.innerHTML = htmlContent;
-            container.dispatchEvent(new CustomEvent('module-loaded', { 
+            container.dispatchEvent(new CustomEvent(`${moduleType}-module-loaded`, { 
                 bubbles: true,
                 detail: moduleName 
             }));
@@ -298,23 +298,6 @@ window.api.onPlaylistsLoaded(data => {
 window.api.onPlaylistsUpdated(data => {
     console.log('Playlists Data Updated: ', data);
 });
-
-function createNewPlaylist(name) {
-    window.api.createNewPlaylist(name);
-}
-
-function removePlaylist(id) {
-    window.api.removePlaylist(id);
-}
-
-// Create Playlist buttons
-document.body.addEventListener('click', e => {
-    if (e.target.matches('.create-playlist-btn')) {
-        showFloatingInput(e.pageX, e.pageY, value => {
-            window.api.createNewPlaylist(value);
-        });
-    }
-})
 
 // Adjust main volume
 window.api.onBackendEvent('new-volume-main', (data) => {

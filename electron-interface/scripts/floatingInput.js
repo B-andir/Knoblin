@@ -1,4 +1,5 @@
-function showFloatingInput(x, y, callback) {
+function showFloatingInput(x, y, text, callback) {
+    console.log('Called Floating Input');
     // Remove any existing floating input
     const existing = document.querySelector('.floating-input-container');
     if (existing) existing.remove();
@@ -11,6 +12,7 @@ function showFloatingInput(x, y, callback) {
     const input = document.createElement('input');
     input.className = 'floating-input-text';
     input.type = 'text';
+    input.value = text || "";
     input.placeholder = 'New Playlist';
 
     const btn = document.createElement('button');
@@ -30,7 +32,7 @@ function showFloatingInput(x, y, callback) {
     function onInputKeydown(e) {
         if (e.key === 'Enter') {
             const val = input.value.trim();
-            if (val) callback(val);
+            if (val) callback(val.length >= 0 ? val : 'New Playlist');
             cleanup();
         } else if (e.key === 'Escape') {
             cleanup();

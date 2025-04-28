@@ -36,8 +36,9 @@ function createWindow() {
     mainWindow.loadFile(path.join(__dirname, 'main.html'));
 
     mainWindow.webContents.once('did-finish-load', () => {
-        mainWindow.webContents.send('playlists-loaded', playlistManager.getPlaylists())
-    })
+        let playlists = playlistManager.getPlaylists();
+        mainWindow.webContents.send('playlists-loaded', { playlists })
+    });
 
     mainWindow.on('close', () => {
         const bounds = mainWindow.getBounds();

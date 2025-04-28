@@ -1,4 +1,4 @@
-const { app, ipcMain } = require('electron')
+const { app, ipcMain, BrowserWindow } = require('electron')
 const playlistManager = require('./playlists/playlistManager');
 const ytdl = require('@distube/ytdl-core');
 const events = require('event-client-lib');
@@ -58,9 +58,25 @@ module.exports = { setupIPCs: (window) => {
         playlistManager.createPlaylist(name);
     });
 
-    ipcMain.on('remove-playlist', async (event, id) => {
-        playlistManager.removePlaylist(id);
+    ipcMain.on('rename-playlst', async (event, data) => {
+        console.log(`Recieved IPC call to rename a playlist.\nPaylist ID: ${data.id}\nNew Name: ${data.newName}`)
+        playlistManager.renamePlaylist(data.id, data.newName);
+    });
+
+    ipcMain.on('duplicate-playlist', async (event, id, name) => {
+        
     })
+
+    ipcMain.on('delete-playlist', async (event, id) => {
+        playlistManager.deletePlaylist(id);
+    });
+
+    ipcMain.on('fetch-playlists', async (event) => {
+        let playlists = playlistManager.getPlaylists();
+        BrowserWindow.getAllWindows().forEach(win => {
+            win.webContents.send('loaded-playlists', { playlists });
+        });
+    });
 
     // ----<  Control Bar  >----
     
