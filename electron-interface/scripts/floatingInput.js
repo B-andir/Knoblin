@@ -21,18 +21,13 @@ function showFloatingInput(x, y, callback) {
     document.body.append(container);
     input.focus();
 
-    const cleanup = () => {
-        container.remove();
-        document.removeEventListener('mousedown', outsideClick);
-    }
-
-    btn.addEventListener('click', () => {
+    function onBtnClick() {
         const val = input.value.trim();
         if (val) callback(val);
         cleanup();
-    });
+    }
 
-    input.addEventListener('keydown', (e) => {
+    function onInputKeydown(e) {
         if (e.key === 'Enter') {
             const val = input.value.trim();
             if (val) callback(val);
@@ -40,7 +35,18 @@ function showFloatingInput(x, y, callback) {
         } else if (e.key === 'Escape') {
             cleanup();
         }
-    });
+    }
+
+    const cleanup = () => {
+        btn.removeEventListener('click', onBtnClick);
+        input.addEventListener('keydown', onInputKeydown);
+        document.removeEventListener('mousedown', outsideClick);
+        container.remove();
+    }
+
+    btn.addEventListener('click', onBtnClick);
+
+    input.addEventListener('keydown', onInputKeydown);
     
     function outsideClick(e) {
         if (!container.contains(e.target)) cleanup();
