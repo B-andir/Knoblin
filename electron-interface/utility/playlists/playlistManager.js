@@ -7,6 +7,7 @@ const dataFilePath = path.join(app.getPath('userData'), 'playlist-data.json');
 
 const DEFAULT_DATA = []
 let playlists = DEFAULT_DATA;
+let colorOptions = DEFAULT_DATA;
 
 async function loadPlaylistsData() {
     try {
@@ -54,10 +55,13 @@ function createPlaylistFromObject(playlistObj, name = null) {
     savePlaylistsData();
 }
 
-function renamePlaylist(id, newName) {
+function updatePlaylist(id, args) {
     const index = playlists.findIndex(item => item.id === id);
     if (index !== -1) {
-        playlists[index].name = newName;
+        playlists[index] = {
+        ...playlists[index],  // keep all existing fields (id, etc.)
+        ...args               // overwrite only the ones provided
+        };
         savePlaylistsData();
     }
 }
@@ -77,8 +81,40 @@ function duplicatePlaylist(id, name) {
     }
 }
 
+function cleanupPlaylists() {
+    for(let i = playlists.length - 1; i >= 0; i--) {
+        if (playlists[i].id == undefined) {
+            playlists.splice(i, 1);
+        }
+    }
+    savePlaylistsData();
+}
+
+/**
+ * Reorder playlists based on an array of playlist IDs.
+ * @param {string[]} newOrder - Array of playlist IDs in the desired order.
+ */
+async function reorderPlaylists(newOrder) {
+    const idToPlaylist = new Map(playlists.map(pl => [pl.id, pl]));
+    // Build reordered list, filtering out any unknown IDs
+    playlists = newOrder
+        .map(id => idToPlaylist.get(id))
+        .filter(pl => pl !== undefined);
+
+    savePlaylistsData();
+}
+
 function getPlaylists() {
     return playlists;
 }
 
-module.exports = { createPlaylist, duplicatePlaylist, renamePlaylist, deletePlaylist, getPlaylists, loadPlaylistsData }
+module.exports = { 
+    createPlaylist, 
+    duplicatePlaylist, 
+    updatePlaylist, 
+    deletePlaylist, 
+    loadPlaylistsData, 
+    cleanupPlaylists,
+    reorderPlaylists,
+    getPlaylists, 
+}

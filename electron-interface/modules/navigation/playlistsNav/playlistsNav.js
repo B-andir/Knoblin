@@ -32,8 +32,20 @@ function renderPlaylistsNavigation(playlists) {
         entry.id = playlist.id;
 
         const htmlString = `
+            <div class="dragHandleContainer">
+                <svg class="dragHandle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6 16"fill="currentColor">
+                    <circle cx="1" cy="2" r="1"/>
+                    <circle cx="1" cy="6" r="1"/>
+                    <circle cx="1" cy="10" r="1"/>
+                    <circle cx="1" cy="14" r="1"/>
+                    <circle cx="5" cy="2" r="1"/>
+                    <circle cx="5" cy="6" r="1"/>
+                    <circle cx="5" cy="10" r="1"/>
+                    <circle cx="5" cy="14" r="1"/>
+                </svg>
+            </div>
             <div class="playlistIcon">
-                <div class="circle" style="background-color: ${playlist.color || "#00000000"}"></div>
+                <div class="circleIcon" style="background-color: ${playlist.color || "#00000000"}"></div>
             </div>
             <div class="playlistName">
                 ${playlist.name}
@@ -53,6 +65,136 @@ function renderPlaylistsNavigation(playlists) {
 
         // Add to container
         container.appendChild(entry);
+        
+        const playlistIcon = entry.querySelector('.circleIcon');
+        on(playlistIcon, 'click', async (e) => {
+            const el = e.target.closest('.playlistIcon');
+            if (!el) return;
+
+            const popup = createFloatingPopup(null, null, el, { destroyOnNew: false, closeOnMouseOut: false });
+
+            popup.container.classList.add('playlistIconPopup');
+
+            updateColorSelection();
+
+            async function updateColorSelection() {
+                async function getCustomColorDivs() {
+                    let dynamicColorDivs = "";
+                    try {
+                        const colors = await window.api.getPlaylistColors()
+                    
+                        dynamicColorDivs = await colors.map(color => `<div class="button existingColor circleIcon" data-bgcolor="${color}" ></div>`).join('');
+                        
+                    } catch (err) {
+                        console.error("Couldn't load color data:", err)
+                        return
+                    }
+
+                    return dynamicColorDivs;
+                }
+
+                getCustomColorDivs().then(dynamicColorDivs => {
+    
+                    const htmlText = `
+                        <div class="button existingColor circleIcon" data-bgcolor="#00000000"></div>
+                        <div class="button existingColor circleIcon" data-bgcolor="#c71c10"></div>
+                        <div class="button existingColor circleIcon" data-bgcolor="#11c5cf"></div>
+                        <div class="button existingColor circleIcon" data-bgcolor="#69d932"></div>
+                        <div class="button existingColor circleIcon" data-bgcolor="#f0609c"></div>
+                        <div class="button existingColor circleIcon" data-bgcolor="#fa9405"></div>
+                        
+                        ${dynamicColorDivs}
+    
+                        <div class="button newColorSelection circleIcon" data-bgcolor="#ffffff">
+                            <svg id="plus-24px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path fill="currentColor" id="plus-24px-2" data-name="plus-24px" d="M23,11H13V1a1,1,0,0,0-2,0V11H1a1,1,0,0,0,0,2H11V23a1,1,0,0,0,2,0V13H23a1,1,0,0,0,0-2Z"/>
+                            </svg>
+                            <input type="color" id="newColorPicker" name="newColorPicker" value="#ffffff">
+                            <div id="colorPickerConfirm"></div>
+                        </div>
+                    `;
+    
+    
+                    popup.container.innerHTML = htmlText;
+    
+                    document.querySelectorAll('.existingColor').forEach(el => {
+                        el.style.setProperty('--bg', el.dataset.bgcolor);
+
+                        popup.on(el, 'click', e => {
+                            window.api.setPlaylistColor(entry.id, el.dataset.bgcolor);
+                            popup.destroy();
+                        });
+
+                        popup.on(el, 'contextmenu', e => {
+                            const menu = createFloatingPopup(e.pageX, e.pageY, el, { destroyOnNew: false });
+                            menu.container.classList.add('confirmDeleteMenu');
+                            menu.container.innerHTML = `<div id="confirmDeleteButton">Delete?</div>`
+
+                            const deleteColorButton = document.querySelector('#confirmDeleteButton');
+                            menu.on(deleteColorButton, 'click', e => {
+                                window.api.removePlaylistColor(el.dataset.bgcolor);
+                                menu.destroy();
+                                updateColorSelection();
+                            });
+                        });
+                    });
+
+                    const newColorButton = document.querySelector('.newColorSelection');
+                    const newColorInput = document.querySelector('#newColorPicker');
+                    const newColorConfirmButton = document.querySelector('#colorPickerConfirm');
+                    let isPickerOpen = false;
+        
+                    function showConfirmButton() {
+                        newColorConfirmButton.classList.add('active');
+                    }
+        
+                    function hideConfirmButton() {
+                        setTimeout(() => {
+                            newColorConfirmButton.classList.remove('active')
+                        }, 10);
+                    }
+        
+                    popup.on(newColorInput, 'click', () => {
+                        setTimeout(() => {
+                            isPickerOpen = document.activeElement === newColorInput;
+        
+                            if (isPickerOpen) {
+                                showConfirmButton();
+                            }
+                        }, 0);
+                    })
+        
+                    popup.on(newColorInput, 'input', () => {
+                        const c = newColorInput.value;
+                        newColorButton.setAttribute('data-color', c);
+                        newColorButton.style.setProperty('--current', c);
+                    });
+        
+                    popup.on(newColorInput, 'change', () => {
+                        isPickerOpen = false;
+                        hideConfirmButton();
+                        
+                        console.log("Save new color");
+                        console.log(newColorInput.value);
+                        window.api.newPlaylistColor(newColorInput.value);
+                        
+                        setTimeout(() => {
+                            updateColorSelection();
+                        }, 10);
+        
+                        console.log('Picker closed (selection)');
+                    });
+        
+                    
+                    popup.on(newColorInput, 'blur', () => {
+                        isPickerOpen = false;
+                        hideConfirmButton();
+                        console.log('Picker closed (blur)');
+                    });
+                });
+            }
+
+        });
 
         const playlistActions = entry.querySelector('.playlistActions');
         on(playlistActions, 'click', e => {
@@ -118,20 +260,46 @@ function renderPlaylistsNavigation(playlists) {
 
             function onRenameBtnClicked(e) {
                 showFloatingInput(e.pageX, e.pageY, playlist.name, value => {
-                    window.api.renamePlaylist(popup.anchorId, value);
+                    window.api.renamePlaylist(popup.anchor.id, value);
                     popup.destroy();
                 });
             }
 
-            function onDeleteBtnClicked() {
-                window.api.deletePlaylist(popup.anchorId);
-                popup.destroy();
+            function onDeleteBtnClicked(e) {
+                // window.api.deletePlaylist(popup.anchor.id);
+                // popup.destroy();
             }
 
             popup.on(renameBtn, 'click', onRenameBtnClicked);
-            popup.on(deleteBtn, 'click', onDeleteBtnClicked);
+            popup.on(deleteBtn, 'click', e => {
+                const menu = createFloatingPopup(e.pageX, e.pageY, deleteBtn, { destroyOnNew: false });
+                menu.container.classList.add('confirmDeleteMenu');
+                menu.container.innerHTML = `<div id="confirmDeleteButton">Delete?</div>`
+
+                const deleteColorButton = document.querySelector('#confirmDeleteButton');
+                menu.on(deleteColorButton, 'click', e => {
+                    window.api.deletePlaylist(popup.anchor.id);
+                    menu.destroy();
+                    popup.destroy();
+                });
+            });
         });
     });
+
+    Sortable.create(container, {
+        handle: '.dragHandle',
+        animation: 150,
+        onEnd: async () => {
+            // build new order array of IDs
+            const order = Array.from(container.children).map(el => el.id);
+            
+            try {
+                window.api.savePlaylistsOrder(order);
+            } catch (err) {
+                console.warn('Error saving playlist order:', err);
+            }
+        }
+    })
 }
 
 function handleNewPlaylistButtonClicked(e) {

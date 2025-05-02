@@ -32,7 +32,7 @@ function showFloatingInput(x, y, text, callback) {
     function onInputKeydown(e) {
         if (e.key === 'Enter') {
             const val = input.value.trim();
-            if (val) callback(val.length >= 0 ? val : 'New Playlist');
+            callback(val && val.length >= 0 ? val : 'New Playlist');
             cleanup();
         } else if (e.key === 'Escape') {
             cleanup();

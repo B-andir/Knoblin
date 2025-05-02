@@ -1,5 +1,6 @@
 const { app, ipcMain, BrowserWindow } = require('electron')
 const playlistManager = require('./playlists/playlistManager');
+const colorManager = require('./playlists/colorManager');
 const ytdl = require('@distube/ytdl-core');
 const events = require('event-client-lib');
 
@@ -60,10 +61,10 @@ module.exports = { setupIPCs: (window) => {
 
     ipcMain.on('rename-playlst', async (event, data) => {
         console.log(`Recieved IPC call to rename a playlist.\nPaylist ID: ${data.id}\nNew Name: ${data.newName}`)
-        playlistManager.renamePlaylist(data.id, data.newName);
+        playlistManager.updatePlaylist(data.id, { name: data.newName});
     });
 
-    ipcMain.on('duplicate-playlist', async (event, id, name) => {
+    ipcMain.on('duplicate-playlist', async (event, data) => {
         
     })
 
@@ -76,6 +77,27 @@ module.exports = { setupIPCs: (window) => {
         BrowserWindow.getAllWindows().forEach(win => {
             win.webContents.send('loaded-playlists', { playlists });
         });
+    });
+
+    ipcMain.on('reorder-playlists', async (event, newOrder) => {
+        playlistManager.reorderPlaylists(newOrder);
+    })
+
+    ipcMain.handle('get-playlist-colors', async (event) => {
+        return colorManager.getColors();
+    });
+
+    ipcMain.on('new-playlist-color', async (event, colorHex) => {
+        console.log(`Save new colors: ${colorHex}`);
+        colorManager.newColor(colorHex);
+    });
+
+    ipcMain.on('remove-playlist-color', async (event, colorHex) => {
+        colorManager.deleteColor(colorHex);
+    });
+
+    ipcMain.on('set-playlist-color', async (event, data) => {
+        playlistManager.updatePlaylist(data.id, { color: data.newColor });
     });
 
     // ----<  Control Bar  >----

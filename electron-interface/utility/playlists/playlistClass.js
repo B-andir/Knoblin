@@ -22,8 +22,8 @@ class Playlist {
     };
 
     static PlaylistTypes = {
-        SingleFire: 'SingleFire',
-        Playlist: 'Playlist'
+        Playlist: 'Playlist',
+        SingleFire: 'SingleFire'
     }
 
     addTrack(track) {

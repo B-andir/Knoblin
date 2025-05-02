@@ -3,6 +3,7 @@ const path = require('path');
 const settings = require('electron-settings');
 const { setupIPCs } = require('./utility/ipcHandler');
 const playlistManager = require('./utility/playlists/playlistManager');
+const colorManager = require('./utility/playlists/colorManager');
 
 function createWindow() {
     // Retrieve the saved window bounds
@@ -54,6 +55,8 @@ function createWindow() {
 
 app.whenReady().then(async () => {
     await playlistManager.loadPlaylistsData();
+    playlistManager.cleanupPlaylists();
+    await colorManager.loadColorData();
     createWindow();
 })
 

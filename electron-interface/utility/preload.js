@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer, Menu } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
     controlWindow: (command) => ipcRenderer.send('window-control', command),
@@ -23,4 +23,18 @@ contextBridge.exposeInMainWorld('api', {
     renamePlaylist: (id, newName) => ipcRenderer.send('rename-playlst', { id, newName }),
 
     deletePlaylist: (id) => ipcRenderer.send('delete-playlist', id),
+
+    savePlaylistsOrder: (newOrder) => ipcRenderer.send('reorder-playlists', newOrder),
+
+    getPlaylistColors: () => {
+        return ipcRenderer.invoke('get-playlist-colors')
+    },
+
+    newPlaylistColor: (colorHex) => ipcRenderer.send('new-playlist-color', colorHex),
+
+    removePlaylistColor: (colorHex) => ipcRenderer.send('remove-playlist-color', colorHex),
+
+    setPlaylistColor: (id, newColor) => ipcRenderer.send('set-playlist-color', { id, newColor }),
+
+    Menu,
 });
