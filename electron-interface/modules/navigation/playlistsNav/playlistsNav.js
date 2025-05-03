@@ -268,13 +268,9 @@ function renderPlaylistsNavigation(playlists) {
                 });
             }
 
-            function onDeleteBtnClicked(e) {
-                // window.api.deletePlaylist(popup.anchor.id);
-                // popup.destroy();
-            }
-
             popup.on(renameBtn, 'click', onRenameBtnClicked);
             popup.on(deleteBtn, 'click', e => {
+                if (document.querySelector('.confirmDeleteMenu')) return;
                 const menu = createFloatingPopup(e.pageX, e.pageY, deleteBtn, { destroyOnNew: false });
                 menu.container.classList.add('confirmDeleteMenu');
                 menu.container.innerHTML = `<div id="confirmDeleteButton">Delete?</div>`
@@ -337,7 +333,7 @@ window.api.onPlaylistsFetchResponse(data => {
 // Setup
 (() => {
     // Init
-    window.initNavigationPlaylistsnav = loadThisScript;
+    window.initNavigationPlaylistsnav = loadThisScript();
 
     // Cleanup
     window.currentNavigationModuleCleanup = function cleanupPlaylistNavModule() {
