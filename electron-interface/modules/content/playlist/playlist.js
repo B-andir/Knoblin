@@ -20,15 +20,19 @@ function handlePasteClipboard() {
 }
 
 // Check if the module's HTML is already loaded
-if (document.getElementById('playlist-module-load-checker')) {
-    loadThisScript();
-} else {
-    // Otherwise, listen for the custom event
-    document.addEventListener('content-module-loaded', loadThisScript);
-}
+// if (document.getElementById('playlist-module-load-checker')) {
+//     loadThisScript();
+// } else {
+//     // Otherwise, listen for the custom event
+//     document.addEventListener('content-module-loaded', loadThisScript);
+// }
 
-// Cleanup
+// -< Setup >-
 (() => {
+    // Init
+    window.initContentPlaylist = loadThisScript;
+
+    // Cleanup
     window.currentContentModuleCleanup = function cleanupPlaylistModule() {
         // Remove event listners
         const submitUrlButton = document.getElementById('submit-url-button');

@@ -1,6 +1,3 @@
-const contentContainer = document.getElementById('content');
-const navigationContainer = document.getElementById('navigation');
-
 // -----<  Button Events  >-----
 
 const closeButton = document.getElementById('close-button');
@@ -119,8 +116,8 @@ function stopResizingBoth() {
 
 // -----<  Module Loading/Unloading  >-----
 
-switchContentModule('playlist');
-switchNavigationModule('playlistsNav');
+switchContentModuleAsync('playlist');
+switchNavigationModuleAsync('playlistsNav');
 
 
 // -----<  Control Bar Functionality  >-----

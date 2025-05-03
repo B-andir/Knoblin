@@ -1,6 +1,9 @@
 const listners = [];
 
 function loadThisScript() {
+    
+    // Fetch the initial data when loading or refreshing window
+    window.api.fetchPlaylists();
     document.removeEventListener('navigation-module-loaded', loadThisScript);
 
 
@@ -322,19 +325,21 @@ window.api.onPlaylistsFetchResponse(data => {
 
 
 
-// Fetch the initial data when loading or refreshing window
-window.api.fetchPlaylists();
 
-// Check if the module's HTML is already loaded
-if (document.getElementById('playlistNav-navigation-module-load-checker')) {
-    loadThisScript();
-} else {
-    // Otherwise, listen for the custom event
-    document.addEventListener('navigation-module-loaded', loadThisScript);
-}
+// // Check if the module's HTML is already loaded
+// if (document.getElementById('playlistNav-navigation-module-load-checker')) {
+//     loadThisScript();
+// } else {
+//     // Otherwise, listen for the custom event
+//     document.addEventListener('navigation-module-loaded', loadThisScript);
+// }
 
-// Cleanup
+// Setup
 (() => {
+    // Init
+    window.initNavigationPlaylistsnav = loadThisScript;
+
+    // Cleanup
     window.currentNavigationModuleCleanup = function cleanupPlaylistNavModule() {
         // Remove event listners
         for (let { target, event, handler, opts } of listners) {
