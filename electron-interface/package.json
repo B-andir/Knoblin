@@ -19,7 +19,7 @@
     "electron": "^35.0.0"
   },
   "dependencies": {
-    "@distube/ytdl-core": "^4.16.9",
+    "@distube/ytdl-core": "^4.16.12",
     "dotenv": "^16.4.7",
     "electron-settings": "^4.0.4",
     "event-client-lib": "file:../event-client-lib",
