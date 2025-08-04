@@ -116,7 +116,11 @@ function stopResizingBoth() {
 
 // -----<  Module Loading/Unloading  >-----
 
-switchContentModuleAsync('playlist');
+// Purely for designing! Remove when Playlist is done.
+( async () => {
+    switchContentModuleAsync('playlist', await window.api.getPlaylist('2ee45d69-f8b8-4a11-a75b-601dcdf9fedc'));
+})();
+
 switchNavigationModuleAsync('playlistsNav');
 
 

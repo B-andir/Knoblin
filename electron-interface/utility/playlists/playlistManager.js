@@ -7,7 +7,6 @@ const dataFilePath = path.join(app.getPath('userData'), 'playlist-data.json');
 
 const DEFAULT_DATA = []
 let playlists = DEFAULT_DATA;
-let colorOptions = DEFAULT_DATA;
 
 async function loadPlaylistsData() {
     try {
@@ -108,6 +107,39 @@ function getPlaylists() {
     return playlists;
 }
 
+function getPlaylist(id) {
+    const index = playlists.findIndex(item => item.id === id);
+    if (index !== -1) return playlists[index];
+    else return null;
+}
+
+function addSongToPlaylist(songObj, playlistId) {
+    const playlist = getPlaylist(playlistId);
+    if (playlist) {
+        playlist.playlist.push(songObj);
+        console.log(`Added track "${songObj.title}" to playlist "${playlist.name}"`);
+        savePlaylistsData();
+    } else return null;
+}
+
+function removeSongFromPlaylist(songIndex, playlistId) {
+    const playlist = getPlaylist(playlistId);
+    if (playlist) {
+        if (songIndex < 0 || songIndex >= playlist.playlist.length) return null;
+        const removed = playlist.playlist.splice(songIndex, 1)[0];
+        console.log(`Removed track "${removed.title}" from playlist "${playlist.name}"`);
+        this.emitPlaylistUpdate();
+    } else return null;
+}
+
+function updateSongInPlaylist(songIndex, options, playlistId) {
+    const playlist = getPlaylist(playlistId);
+    if (playlist) {
+        if (songIndex < 0 || songIndex >= playlist.playlist.length) return null;
+        return (playlist.playlist[songIndex] = { ...options });
+    } else return null;
+}
+
 module.exports = { 
     createPlaylist, 
     duplicatePlaylist, 
@@ -117,4 +149,8 @@ module.exports = {
     cleanupPlaylists,
     reorderPlaylists,
     getPlaylists, 
+    getPlaylist,
+    addSongToPlaylist,
+    removeSongFromPlaylist,
+    updateSongInPlaylist,
 }

@@ -42,10 +42,6 @@
     background-color: lightgray;
     box-shadow: 0px 2px 2px 1px rgba(0,0,0,0);
     transition: width ease 100ms, height ease 100ms, box-shadow ease 200ms, border-radius ease 100ms;
-
-    &:hover {
-        cursor: pointer;
-    }
 }
 
 .playlistEntry {
@@ -105,10 +101,6 @@
         text-align: center;
         box-shadow: 0px 1px 1px -4px rgba(0,0,0,0);
         transition: color ease-out 100ms, box-shadow ease-in-out 90ms;
-
-        &:hover {
-            box-shadow: 0px 3px 3px -3px rgba(0,0,0,0.6);
-        }
     }
 
     .playlistActions {
@@ -123,14 +115,6 @@
             box-shadow: 0px 0px 3px 0px rgba(0,0,0,0);
             transition: color ease-out 185ms, box-shadow ease-out 170ms;
         }
-
-        &:hover {
-            cursor: pointer;
-
-            svg {
-                box-shadow: 0px 0px 7px 1px rgba(0,0,0,0.3) !important;
-            }
-        }
     }
 
     &:hover {
@@ -139,16 +123,24 @@
         }
 
         .playlistIcon .circleIcon {
+            cursor: pointer;
             box-shadow: 1px 2px 2px 1px rgba(0,0,0,0.4);
         }
 
         .playlistName {
+            box-shadow: 0px 3px 3px -3px rgba(0,0,0,0.6);
             color: $secondary;
         }
 
-        .playlistActions svg {
-            color: darken($secondary, 14);
+        .playlistActions {
+            cursor: pointer;
+
+            svg {
+                box-shadow: 0px 0px 7px 1px rgba(0,0,0,0.3) !important;
+                color: darken($secondary, 14);
+            }
         }
+        
     }
 
     &.active {
@@ -158,6 +150,13 @@
     }
 
     &.selected {
+        
+        box-shadow: -5px 0px 5px -2px rgba($secondary, 0.6);
+        
+        .playlistName {
+            color: rgba($contrast, 0.8);
+        }
+
         .playlistActions svg {
             color: $contrast;
             box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.25);

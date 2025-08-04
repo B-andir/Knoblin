@@ -27,6 +27,8 @@ module.exports = { setupIPCs: (window) => {
         }
     });
 
+    // DEPRECATED
+    //-
     ipcMain.on('play-song', async (event, url) => {
         if (!ytdl.validateURL(url)) {
             throw new Error('Invalid YouTube URL: ', url);
@@ -40,6 +42,7 @@ module.exports = { setupIPCs: (window) => {
 
         events.emit('playSong', { song, GUILD_ID: process.env.GUILD_ID });
     });
+    //-
 
     ipcMain.handle('toggle-pin', (event) => {
         if (!window) return false;
@@ -79,6 +82,14 @@ module.exports = { setupIPCs: (window) => {
         });
     });
 
+    ipcMain.handle('get-playlist', async (event, id) => {
+        let playlist = playlistManager.getPlaylist(id);
+        if (playlist) {
+            console.log(playlist);
+            return playlist;
+        }
+    });
+
     ipcMain.on('reorder-playlists', async (event, newOrder) => {
         playlistManager.reorderPlaylists(newOrder);
     })
@@ -98,6 +109,23 @@ module.exports = { setupIPCs: (window) => {
 
     ipcMain.on('set-playlist-color', async (event, data) => {
         playlistManager.updatePlaylist(data.id, { color: data.newColor });
+    });
+
+    // ----< Playlist Actions >----
+    
+    ipcMain.on('add-song-to-playlist', async (event, data) => {
+        const url = data.songUrl;
+        if (!ytdl.validateURL(url)) {
+            throw new Error('Invalid YouTube URL: ', url);
+        }
+
+        const info = await ytdl.getInfo(url);
+        const song = {
+            title: info.videoDetails.title,
+            url: url,
+        };
+        
+        playlistManager.addSongToPlaylist(song, data.playlistId);
     });
 
     // ----<  Control Bar  >----
