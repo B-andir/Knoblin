@@ -41,7 +41,17 @@ contextBridge.exposeInMainWorld('api', {
 
     // ----< Playlist Actions >----
 
-    addSongToPlaylist: (songUrl, playlistId) => ipcRenderer.send('add-song-to-playlist', {songUrl, playlistId}),
+    addSongToPlaylist: async (songUrl, playlistId) => {
+        return ipcRenderer.invoke('add-song-to-playlist', {songUrl, playlistId});
+    },
+
+    removeSongFromPlaylist: async (songIndex, playlistId) => {
+        return ipcRenderer.invoke('remove-song-from-playlist', {songIndex, playlistId});
+    },
+
+    updateSongInPlaylist: async (songIndex, newData, playlistId) => {
+        return ipcRenderer.invoke('update-song-in-playlist', {songIndex, newData, playlistId});
+    },
 
     Menu,
 });

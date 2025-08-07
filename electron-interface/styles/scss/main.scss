@@ -1,4 +1,6 @@
-@import 'colors', 'fonts';
+@use 'sass:color';
+@use 'colors';
+@use 'fonts';
 
 body {
     margin: 0;
@@ -10,7 +12,7 @@ body {
     width: calc(100dvw - 10px);
     height: 2rem;
     margin: 0;
-    color: rgba($secondary, 0.5);
+    color: rgba(colors.$secondary, 0.5);
     padding: 0 0 0 10px;
 
     align-items: center;
@@ -53,12 +55,12 @@ body {
             }
     
             &:hover {
-                background-color: lighten($main, 5%);
-                color: rgba($secondary, 1);
+                background-color: color.adjust(colors.$main, $lightness: 5%);
+                color: rgba(colors.$secondary, 1);
             }
 
             &.active {
-                color: $contrast !important
+                color: colors.$contrast !important
             }
         }
 
@@ -76,7 +78,7 @@ body {
     grid-template-columns: auto 1fr;
     grid-template-rows: 1fr auto;
     height: calc(100dvh - 2rem);
-    background-color: $main;
+    background-color: colors.$main;
     margin: 0;
 }
 
@@ -95,7 +97,7 @@ body {
     grid-area: content;
     position: relative;
     overflow: auto;
-    background-color: lighten($main, 5%);
+    background-color: color.adjust(colors.$main, $lightness: 5%);
     border-top-left-radius: 10px;
 }
 
@@ -103,7 +105,7 @@ body {
     grid-area: control;
     position: relative;
     height: 100px;
-    background-color: darken($main, 6%);
+    background-color: color.adjust(colors.$main, $lightness: -6%);
 }
 
 // Floating Input Popup
@@ -111,14 +113,15 @@ body {
     position: absolute;
     z-index: 1000;
     display: flex;
-    background: $main;
-    border: 1px solid $contrast;
+    width: 210px;
+    background: colors.$main;
+    border: 1px solid colors.$contrast;
     border-radius: 4px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 
     input {
         font-size: 1rem;
-        color: $secondary;
+        color: colors.$secondary;
         padding: 4px 8px;
         border: none;
         outline: none;
@@ -128,7 +131,7 @@ body {
 
     button {
         font-size: 1rem;
-        color: $contrast;
+        color: colors.$contrast;
         padding: 4px 8px;
         border: none;
         outline: none;

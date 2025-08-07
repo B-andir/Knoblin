@@ -1,12 +1,13 @@
-@import 'colors', 'fonts';
+@use 'colors';
+@use 'fonts';
 
 html {
     font-family: 'Roboto', sans-serif;
 }
 
 body {
-    background-color: $main;
-    color: $secondary;
+    background-color: colors.$main;
+    color: colors.$secondary;
 }
 
 .drag-area {

@@ -1,4 +1,4 @@
-@import '../colors';
+@use '../colors';
 
 #navigation-playlistsNav {
     margin-top: 5px;
@@ -29,7 +29,7 @@
     left: 50%;
     width: 80%;
     height: 1px;
-    background: linear-gradient(90deg, $main 4%, lighten($main, 3) 10%, lighten($main, 2) 90%, $main 96%);
+    background: linear-gradient(90deg, colors.$main 4%, lighten(colors.$main, 3) 10%, lighten(colors.$main, 2) 90%, colors.$main 96%);
     margin: -0.3rem 0;
     transform: translateX(-50%);
 }
@@ -65,7 +65,7 @@
 
         .dragHandle {
             cursor: grab;
-            color: lighten($main, 4);
+            color: lighten(colors.$main, 4);
             height: 100%;
             transform: scale(80%);
         }
@@ -87,7 +87,7 @@
         font-size: 1rem;
         font-weight: 300;
         letter-spacing: 0.013rem;
-        color: rgba($secondary, 0.6);
+        color: rgba(colors.$secondary, 0.6);
         overflow-x: hidden;
         height: 92%;
         padding-left: 0.5rem;
@@ -109,7 +109,7 @@
         justify-content: center;
 
         svg {
-            color: rgba($main, 0);
+            color: rgba(colors.$main, 0);
             height: 90%;
             transform: scaleX(1.12) scaleY(0.88);
             box-shadow: 0px 0px 3px 0px rgba(0,0,0,0);
@@ -117,7 +117,7 @@
         }
     }
 
-    &:hover {
+    &:hover, &.stay-hovered {
         .dragHandleContainer {
             opacity: 1;
         }
@@ -129,7 +129,7 @@
 
         .playlistName {
             box-shadow: 0px 3px 3px -3px rgba(0,0,0,0.6);
-            color: $secondary;
+            color: colors.$secondary;
         }
 
         .playlistActions {
@@ -137,7 +137,7 @@
 
             svg {
                 box-shadow: 0px 0px 7px 1px rgba(0,0,0,0.3) !important;
-                color: darken($secondary, 14);
+                color: darken(colors.$secondary, 14);
             }
         }
         
@@ -145,28 +145,28 @@
 
     &.active {
         .playlistName {
-            color: $contrast !important;
+            color: colors.$contrast !important;
         }
     }
 
     &.selected {
         
-        box-shadow: -5px 0px 5px -2px rgba($secondary, 0.6);
+        box-shadow: -5px 0px 5px -2px rgba(colors.$secondary, 0.6);
         
         .playlistName {
-            color: rgba($contrast, 0.8);
+            color: rgba(colors.$contrast, 0.8);
         }
 
         .playlistActions svg {
-            color: $contrast;
+            color: colors.$contrast;
             box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.25);
         }
     }
 }
 
 .playlistIconPopup {
-    background-color: $main;
-    border: 1px solid lighten($main, 10);
+    background-color: colors.$main;
+    border: 1px solid lighten(colors.$main, 10);
     border-radius: 6px;
 
     display: grid;
@@ -184,7 +184,7 @@
         align-items: center;
 
         svg {
-            color: $secondary;
+            color: colors.$secondary;
             transform: scale(0.65);
         }
 
@@ -227,8 +227,8 @@
 }
 
 .playlistActionsPopup {
-    background-color: $main;
-    border: 1px solid darken($main, 4);
+    background-color: colors.$main;
+    border: 1px solid darken(colors.$main, 4);
     border-radius: 6px;
     // padding: 4px;
     width: fit-content;
@@ -249,8 +249,8 @@
         font-weight: 300;
         letter-spacing: 0.06em;
 
-        color: darken($secondary, 20);
-        border: 1px solid lighten($main, 2);
+        color: darken(colors.$secondary, 20);
+        border: 1px solid lighten(colors.$main, 2);
         // border-radius: inherit;
 
         transition: border ease 60ms, color ease-in 50ms, background-color ease 80ms;
@@ -270,9 +270,9 @@
         }
 
         &:hover {
-            color: $secondary;
+            color: colors.$secondary;
             cursor: pointer;
-            border-color: lighten($main, 8);
+            border-color: lighten(colors.$main, 8);
         }
 
         &#playlistActionDeleteButton {
@@ -296,7 +296,7 @@
 }
 
 .confirmDeleteMenu {
-    background-color: rgba($main, 0.6);
+    background-color: rgba(colors.$main, 0.6);
     backdrop-filter: blur(2px);
     border: 1px solid rgba(red, 0.6);
     border-radius: 4px;

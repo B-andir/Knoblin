@@ -364,7 +364,7 @@
                 e.preventDefault();
         
                 const element = document.querySelector('.playlistEntry.selected');
-                const name = element.querySelector('.playlistName').innerHTML.trimEnd();
+                const name = element.querySelector('.playlistName').innerHTML.trim();
         
                 showFloatingInput(target.offetWidth, target.offsetTop, name, value => {
                     window.api.renamePlaylist(element.id, value);

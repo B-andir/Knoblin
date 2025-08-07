@@ -32,11 +32,11 @@ async function updateFrontend() {
     });
 }
 
-async function savePlaylistsData() {
+async function savePlaylistsData(sendEvent = true) {
     try {
         await fs.mkdir(path.dirname(dataFilePath), { recursive: true });
         await fs.writeFile(dataFilePath, JSON.stringify(playlists, null, 2), 'utf-8');
-        updateFrontend();
+        if (sendEvent) updateFrontend();
     } catch (err) {
         console.error('Failed to save data:', err);
     }
@@ -118,7 +118,8 @@ function addSongToPlaylist(songObj, playlistId) {
     if (playlist) {
         playlist.playlist.push(songObj);
         console.log(`Added track "${songObj.title}" to playlist "${playlist.name}"`);
-        savePlaylistsData();
+        savePlaylistsData(false);
+        return playlist;
     } else return null;
 }
 
@@ -128,7 +129,8 @@ function removeSongFromPlaylist(songIndex, playlistId) {
         if (songIndex < 0 || songIndex >= playlist.playlist.length) return null;
         const removed = playlist.playlist.splice(songIndex, 1)[0];
         console.log(`Removed track "${removed.title}" from playlist "${playlist.name}"`);
-        this.emitPlaylistUpdate();
+        savePlaylistsData(false);
+        return playlist;
     } else return null;
 }
 
@@ -136,7 +138,9 @@ function updateSongInPlaylist(songIndex, options, playlistId) {
     const playlist = getPlaylist(playlistId);
     if (playlist) {
         if (songIndex < 0 || songIndex >= playlist.playlist.length) return null;
-        return (playlist.playlist[songIndex] = { ...options });
+        playlist.playlist[songIndex] = { ...options }
+        savePlaylistsData(false);
+        return playlist;
     } else return null;
 }
 

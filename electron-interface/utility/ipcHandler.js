@@ -113,7 +113,7 @@ module.exports = { setupIPCs: (window) => {
 
     // ----< Playlist Actions >----
     
-    ipcMain.on('add-song-to-playlist', async (event, data) => {
+    ipcMain.handle('add-song-to-playlist', async (event, data) => {
         const url = data.songUrl;
         if (!ytdl.validateURL(url)) {
             throw new Error('Invalid YouTube URL: ', url);
@@ -125,7 +125,15 @@ module.exports = { setupIPCs: (window) => {
             url: url,
         };
         
-        playlistManager.addSongToPlaylist(song, data.playlistId);
+        return playlistManager.addSongToPlaylist(song, data.playlistId);
+    });
+
+    ipcMain.handle('remove-song-from-playlist', async (event, data) => {
+        return playlistManager.removeSongFromPlaylist(data.songIndex, data.playlistId);
+    });
+
+    ipcMain.handle('update-song-in-playlist', async (event, data) => {
+        return playlistManager.updateSongInPlaylist(data.songIndex, data.newData, data.playlistId);
     });
 
     // ----<  Control Bar  >----
