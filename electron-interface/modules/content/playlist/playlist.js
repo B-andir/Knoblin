@@ -6,19 +6,19 @@
         #prescrollAnimId;
         #scrolAnimId;
         #postscrollAnimId;
+        #currentlySelectedCard;
 
         constructor(data) {
             this.#data = data;
             this.#prescrollAnimId = null;
             this.#scrolAnimId = null;
             this.#postscrollAnimId = null;
+            this.#currentlySelectedCard = null;
             this.init()
         }
 
         init() {
             console.log("Load Playlist module");
-            
-            console.log("Playlist data: ", this.#data);
             
             const submitUrlButton = document.getElementById('submit-url-button');
             const pasteClipboardButton = document.getElementById('paste-clipboard-button');
@@ -34,11 +34,17 @@
             else console.error('url-input not found');
 
             this.BuildPlaylistContent();
+
+            console.log("Playlist Module has been loaded");
         }
         
         #on(target, event, handler, opts) {
             target.addEventListener(event, handler, opts);
             this.#listeners.push({ target, event, handler, opts });
+        }
+
+        #off(target, event, handler, opts) {
+            target.removeEventListener(event, handler, opts);
         }
 
         cleanup() {
@@ -60,6 +66,7 @@
             this.#prescrollAnimId = null;
             this.#scrolAnimId = null;
             this.#postscrollAnimId = null;
+            this.#currentlySelectedCard = null;
 
             console.log('Playlist module has been cleaned up.')
         }
@@ -111,7 +118,7 @@
                         <div class="song-selection-region">
                             <div class="song-index">
                                 <div class="song-actual-index">${index + 1}</div>
-                                <div class="song-playhead">
+                                <div class="song-playhead" title="Play Song">
                                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                         <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -194,6 +201,53 @@
 
                     // --- Song card interactions ---
 
+                    // Song Selection
+                    const songSelection = newSongCard.querySelector('.song-selection-region');
+                    this.#on(songSelection, 'click', e => {
+                        const OnClickAnywhere = _e => {
+                            const targetElement = _e.target.closest('.song-card');
+
+                            if (!targetElement) {
+                                // Clicked outside a song card element
+                                if (this.#currentlySelectedCard)
+                                    this.#currentlySelectedCard.classList.remove('selected');
+                                this.#currentlySelectedCard = null;
+                            }
+
+                            this.#off(document, 'mousedown', OnClickAnywhere);
+                        }
+                        this.#off(document, 'mousedown', OnClickAnywhere);
+
+                        const el = e.target.closest('.song-card');
+                        if (!el) {
+                            if (this.#currentlySelectedCard) {
+                                this.#currentlySelectedCard.classList.remove('selected');
+                                this.#currentlySelectedCard = null;
+                            }
+                            return;
+                        }
+
+                        const StartPlayingSong = () => {
+                            window.api.playSong(el.dataset.index, this.#data.id);
+                        }
+                        
+                        if (el == this.#currentlySelectedCard) {
+                            console.log("Event: Should start playing song");
+                            StartPlayingSong();
+                        } else if (e.target.closest('.song-index')) {
+                            console.log("Playhead clicked!");
+                            StartPlayingSong();
+                        } else {
+                            if (this.#currentlySelectedCard)
+                                this.#currentlySelectedCard.classList.remove('selected');
+                            el.classList.add('selected');
+                            this.#currentlySelectedCard = el;
+                        }
+
+                        this.#on(document, 'mousedown', OnClickAnywhere);
+                    });
+
+                    // Song Actions
                     const songActions = newSongCard.querySelector('.song-actions');
                     this.#on(songActions, 'click', e => {
                         const el = e.target.closest('.song-actions');
@@ -287,7 +341,7 @@
                                 }
                             });
                         });
-                    })
+                    });
                 }
             }
         } 

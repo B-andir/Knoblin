@@ -136,6 +136,10 @@ module.exports = { setupIPCs: (window) => {
         return playlistManager.updateSongInPlaylist(data.songIndex, data.newData, data.playlistId);
     });
 
+    ipcMain.handle('play-song-from-playlist', async (event, data) => {
+        console.log(`IPC Handler: Play song: ${data.songIndex}, from playlist ${data.playlistId}`);
+    });
+    
     // ----<  Control Bar  >----
     
     // ~~ Events ~~

@@ -53,5 +53,9 @@ contextBridge.exposeInMainWorld('api', {
         return ipcRenderer.invoke('update-song-in-playlist', {songIndex, newData, playlistId});
     },
 
+    playSong: async (songIndex, playlistId) => {
+        return ipcRenderer.invoke('play-song-from-playlist', {songIndex, playlistId});
+    },
+    
     Menu,
 });
