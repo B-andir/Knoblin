@@ -1,9 +1,10 @@
+@use 'sass:color';
 @use '../colors';
 
 #navigation-playlistsNav {
     margin-top: 5px;
     width: 100%;
-    height: 100%;
+    height: 99%;
 
     display: flex;
     flex-direction: column;
@@ -11,11 +12,32 @@
 }
 
 #navigation-playlistsContainer {
-    width: 95%;
+    width: 99%;
+    padding-bottom: 4px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.6rem;
+
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+    &::-webkit-scrollbar {
+        width: 7px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: color.adjust(colors.$main, $lightness: 2%);
+        border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background-color: color.adjust(colors.$main, $lightness: 4%);
+    }
 }
 
 #navigation-playlistsContainer > * {
@@ -88,7 +110,9 @@
         font-weight: 300;
         letter-spacing: 0.013rem;
         color: rgba(colors.$secondary, 0.6);
-        overflow-x: hidden;
+        white-space: nowrap;
+        overflow: hidden;
+        user-select: none;
         height: 92%;
         padding-left: 0.5rem;
         width: fit-content;

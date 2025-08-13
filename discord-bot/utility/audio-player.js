@@ -16,7 +16,7 @@ async function joinVoice(channelId, guildId, forced = false) {
         }
     });
 
-    player.on('playing', () => {
+    player.on('playing', event => {
         
     });
 

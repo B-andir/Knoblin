@@ -144,6 +144,15 @@ function updateSongInPlaylist(songIndex, options, playlistId) {
     } else return null;
 }
 
+function getSongByIndex(songIndex, playlistId) {
+    const playlist = getPlaylist(playlistId);
+    if (playlist) {
+        if (songIndex < 0 || songIndex >= playlist.playlist.length) return null;
+        const song = playlist.playlist[songIndex] || null;
+        return song;
+    } else return null;
+}
+
 module.exports = { 
     createPlaylist, 
     duplicatePlaylist, 
@@ -157,4 +166,5 @@ module.exports = {
     addSongToPlaylist,
     removeSongFromPlaylist,
     updateSongInPlaylist,
+    getSongByIndex,
 }

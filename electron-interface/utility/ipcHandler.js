@@ -137,9 +137,13 @@ module.exports = { setupIPCs: (window) => {
     });
 
     ipcMain.handle('play-song-from-playlist', async (event, data) => {
-        console.log(`IPC Handler: Play song: ${data.songIndex}, from playlist ${data.playlistId}`);
+        const song = await playlistManager.getSongByIndex(data.songIndex, data.playlistId);
+
+        events.emit('playSong', { song, GUILD_ID: process.env.GUILD_ID });
     });
     
+
+
     // ----<  Control Bar  >----
     
     // ~~ Events ~~

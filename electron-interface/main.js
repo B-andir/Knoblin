@@ -55,6 +55,8 @@ function stopResizingLeftPanel() {
 
 const horizontalDivider = document.getElementById('controlHorizontalDivider');
 const controlPanel = document.getElementById('control');
+const contentPanel = document.getElementById('content');
+const topMenu = document.getElementById('top-menu')
 
 horizontalDivider.addEventListener('mousedown', (event) => {
     event.preventDefault();
@@ -70,6 +72,9 @@ function resizeBottomPanel(event) {
 
     if (newHeight > 50 && newHeight < 200) {
         controlPanel.style.height = newHeight + 'px';
+        const newOppositeHeight = containerHeight - newHeight - topMenu.offsetHeight;
+        contentPanel.style.height = newOppositeHeight + 'px';
+        navPanel.style.height = newOppositeHeight + 'px';
         updateCornerPosition();
     }
 

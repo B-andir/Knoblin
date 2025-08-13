@@ -20,6 +20,7 @@
         init() {
             console.log("Load Playlist module");
             
+            const container = document.getElementById('content');
             const submitUrlButton = document.getElementById('submit-url-button');
             const pasteClipboardButton = document.getElementById('paste-clipboard-button');
             const urlInputField = document.getElementById('url-input');
@@ -34,6 +35,7 @@
             else console.error('url-input not found');
 
             this.BuildPlaylistContent();
+            attachCustomScrollbar(container, this);
 
             console.log("Playlist Module has been loaded");
         }
@@ -45,6 +47,10 @@
 
         #off(target, event, handler, opts) {
             target.removeEventListener(event, handler, opts);
+        }
+
+        on(target, event, handler, opts) {
+            this.#on(target, event, handler, opts)
         }
 
         cleanup() {
