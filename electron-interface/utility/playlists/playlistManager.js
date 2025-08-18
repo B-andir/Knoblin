@@ -1,5 +1,6 @@
 const { app, BrowserWindow } = require('electron');
 const Playlist = require('./playlistClass');
+const Song = require('./songClass');
 const path = require('path');
 const fs = require('fs').promises;
 
@@ -116,8 +117,9 @@ function getPlaylist(id) {
 function addSongToPlaylist(songObj, playlistId) {
     const playlist = getPlaylist(playlistId);
     if (playlist) {
-        playlist.playlist.push(songObj);
-        console.log(`Added track "${songObj.title}" to playlist "${playlist.name}"`);
+        const newSong = new Song(songObj.title, songObj.url);
+        playlist.playlist.push(newSong);
+        console.log(`Added track "${newSong.title}" to playlist "${playlist.name}"`);
         savePlaylistsData(false);
         return playlist;
     } else return null;
@@ -149,6 +151,22 @@ function getSongByIndex(songIndex, playlistId) {
     if (playlist) {
         if (songIndex < 0 || songIndex >= playlist.playlist.length) return null;
         const song = playlist.playlist[songIndex] || null;
+        
+        if (!song.id) {
+            const newSong = new Song(song.title, song.url);
+            playlist.playlist[songIndex] = newSong;
+            return newSong;
+        }
+
+        return song;
+    } else return null;
+}
+
+function getSongById(songId, playlistId) {
+    const playlist = getPlaylist(playlistId);
+    if (playlist) {
+        const index = playlist.playlist.findIndex(item => item.id === id);
+        const song = playlist.playlist[index] || null;
         return song;
     } else return null;
 }
@@ -167,4 +185,5 @@ module.exports = {
     removeSongFromPlaylist,
     updateSongInPlaylist,
     getSongByIndex,
+    getSongById,
 }

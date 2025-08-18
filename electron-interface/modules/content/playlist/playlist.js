@@ -109,13 +109,18 @@
 
             if (playlist) {
                 for (let index = 0; index < playlist.length; index++) {
-                    const element = playlist[index];
+                    const song = playlist[index];
                     
-                    let songId = "song-"
-                    if (index <= 9) 
-                        songId += "0" + index;
-                    else 
-                        songId += index;
+                    let songId = "";
+                    if (song.id) {
+                        songId = song.id;
+                    } else {
+                        songId = "song-"
+                        if (index <= 9) 
+                            songId += "0" + index;
+                        else 
+                            songId += index;
+                    }
 
                     const newSongCard = document.createElement('div');
                     newSongCard.classList.add('song-card');
@@ -136,7 +141,7 @@
                             </div>
                             <div class="song-title">
                                 <span class="text-fade-content">
-                                    ${element.title}
+                                    ${song.title}
                                 </span>
                             </div>
                         </div>
@@ -152,7 +157,7 @@
                             </div>
                         </div>
                     `;
-
+                    
                     newSongCard.dataset.index = index;
                     newSongCard.innerHTML = songCardString;
 
@@ -267,7 +272,7 @@
                         const popup = createFloatingPopup(x, y, newSongCard, { 'shouldBeOnLeft': true});
 
                         popup.container.classList.add('song-actions-popup');
-        
+                        
                         popup.container.innerHTML = `
                             <div class="button textIcon" id="song-actions-rename-button">
                                 <div class="icon">
@@ -350,7 +355,7 @@
                     });
                 }
             }
-        } 
+        }
     }
 
     // === Global Interface ===
