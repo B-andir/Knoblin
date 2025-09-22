@@ -18,7 +18,7 @@
     "dev:hardware": "cd hardware-interface && npm run dev",
     "update-commands": "cd discord-bot && npm run update-commands",
     "update-commands-global": "cd discord-bot && npm run update-commands-global",
-    "update-packages": "cd discord-bot && npm i && npm i @distube/ytdl-core@latest && cd ../electron-interface && npm i && npm i @distube/ytdl-core@latest && cd ../event-server && npm i"
+    "update-packages": "cd discord-bot && npm i && npm i @distube/ytdl-core@latest && cd ../electron-interface && npm i && npm i @distube/ytdl-core@latest && cd ../event-server && npm i && cd ../hardware-interface && npm i"
   },
   "repository": {
     "type": "git",
