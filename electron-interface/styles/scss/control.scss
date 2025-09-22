@@ -1,4 +1,5 @@
-@import 'colors', 'fonts';
+@use 'colors';
+@use 'fonts';
 
 #control {
 
@@ -9,17 +10,17 @@
         justify-content: center;
 
         #control-ambience {
-            border-left: 1px double $main;
+            border-left: 1px double colors.$main;
         }
 
         #control-music {
-            border: 2px double $main;
+            border: 2px double colors.$main;
             border-top: none;
             border-bottom: none;
         }
 
         #control-sfx {
-            border-right: 1px double $main;
+            border-right: 1px double colors.$main;
         }
     }
 
@@ -46,7 +47,7 @@
             font-size: 0.9rem;
             font-family: 'Roboto', 'sans-serif';
             font-weight: 300;
-            color: rgba($secondary, 0.5);
+            color: rgba(colors.$secondary, 0.5);
 
             transition: color 180ms ease-in-out, font-size 180ms ease-in-out;
         }
@@ -61,7 +62,7 @@
             }
 
             h2 {
-                color: rgba($contrast, 0.8);
+                color: rgba(colors.$contrast, 0.8);
                 font-size: 1.05rem;
                 font-weight: 400;
             }
@@ -70,7 +71,7 @@
 
         &:hover {
             h2 {
-                color: rgba($contrast, 1)
+                color: rgba(colors.$contrast, 1)
             }
         }
     }
@@ -93,7 +94,7 @@
             display: block;
             position: absolute;
             z-index: 99;
-            color: $secondary;
+            color: colors.$secondary;
             width: 100%;
             text-align: center;
             font-size: 1.0rem;
@@ -139,7 +140,7 @@
 
             &:hover {
                 &::-webkit-slider-thumb {
-                    box-shadow: 0 20rem 0 20rem rgba($contrast, 0.7);
+                    box-shadow: 0 20rem 0 20rem rgba(colors.$contrast, 0.7);
                 }
             }
 

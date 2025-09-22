@@ -27,6 +27,8 @@ module.exports = { setupIPCs: (window) => {
         }
     });
 
+    // DEPRECATED
+    //-
     ipcMain.on('play-song', async (event, url) => {
         if (!ytdl.validateURL(url)) {
             throw new Error('Invalid YouTube URL: ', url);
@@ -40,6 +42,7 @@ module.exports = { setupIPCs: (window) => {
 
         events.emit('playSong', { song, GUILD_ID: process.env.GUILD_ID });
     });
+    //-
 
     ipcMain.handle('toggle-pin', (event) => {
         if (!window) return false;
@@ -79,6 +82,14 @@ module.exports = { setupIPCs: (window) => {
         });
     });
 
+    ipcMain.handle('get-playlist', async (event, id) => {
+        let playlist = playlistManager.getPlaylist(id);
+        if (playlist) {
+            console.log(playlist);
+            return playlist;
+        }
+    });
+
     ipcMain.on('reorder-playlists', async (event, newOrder) => {
         playlistManager.reorderPlaylists(newOrder);
     })
@@ -99,6 +110,39 @@ module.exports = { setupIPCs: (window) => {
     ipcMain.on('set-playlist-color', async (event, data) => {
         playlistManager.updatePlaylist(data.id, { color: data.newColor });
     });
+
+    // ----< Playlist Actions >----
+    
+    ipcMain.handle('add-song-to-playlist', async (event, data) => {
+        const url = data.songUrl;
+        if (!ytdl.validateURL(url)) {
+            throw new Error('Invalid YouTube URL: ', url);
+        }
+
+        const info = await ytdl.getInfo(url);
+        const song = {
+            title: info.videoDetails.title,
+            url: url,
+        };
+        
+        return playlistManager.addSongToPlaylist(song, data.playlistId);
+    });
+
+    ipcMain.handle('remove-song-from-playlist', async (event, data) => {
+        return playlistManager.removeSongFromPlaylist(data.songIndex, data.playlistId);
+    });
+
+    ipcMain.handle('update-song-in-playlist', async (event, data) => {
+        return playlistManager.updateSongInPlaylist(data.songIndex, data.newData, data.playlistId);
+    });
+
+    ipcMain.handle('play-song-from-playlist', async (event, data) => {
+        const song = await playlistManager.getSongByIndex(data.songIndex, data.playlistId);
+
+        events.emit('playSong', { song, GUILD_ID: process.env.GUILD_ID });
+    });
+    
+
 
     // ----<  Control Bar  >----
     

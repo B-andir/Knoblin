@@ -55,6 +55,8 @@ function stopResizingLeftPanel() {
 
 const horizontalDivider = document.getElementById('controlHorizontalDivider');
 const controlPanel = document.getElementById('control');
+const contentPanel = document.getElementById('content');
+const topMenu = document.getElementById('top-menu')
 
 horizontalDivider.addEventListener('mousedown', (event) => {
     event.preventDefault();
@@ -70,6 +72,9 @@ function resizeBottomPanel(event) {
 
     if (newHeight > 50 && newHeight < 200) {
         controlPanel.style.height = newHeight + 'px';
+        const newOppositeHeight = containerHeight - newHeight - topMenu.offsetHeight;
+        contentPanel.style.height = newOppositeHeight + 'px';
+        navPanel.style.height = newOppositeHeight + 'px';
         updateCornerPosition();
     }
 
@@ -116,8 +121,10 @@ function stopResizingBoth() {
 
 // -----<  Module Loading/Unloading  >-----
 
-switchContentModuleAsync('playlist');
-switchNavigationModuleAsync('playlistsNav');
+// Purely for designing! Remove when Playlist is done.
+( async () => {
+    switchContentModuleAsync('playlist', await window.api.getPlaylist('2ee45d69-f8b8-4a11-a75b-601dcdf9fedc'));
+})();
 
 
 // -----<  Control Bar Functionality  >-----

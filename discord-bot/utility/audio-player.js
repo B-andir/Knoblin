@@ -16,8 +16,12 @@ async function joinVoice(channelId, guildId, forced = false) {
         }
     });
 
-    player.on('playing', () => {
-        
+    player.on('playing', event => {
+        console.log("Player started playing a song");
+    });
+
+    player.on('idle', event => {
+        console.log("Player is idle, play next song");
     });
 
     player.on('error', error => {
@@ -48,7 +52,7 @@ async function playSong(song, guildId) {
     if (!connection) {
         return;
     }
-
+    
     const stream = ytdl(song.url, { 
         filter: 'audioonly', 
         quality: 'highestaudio', 
@@ -61,6 +65,7 @@ async function playSong(song, guildId) {
         agent});
     const resource = await createAudioResource(stream, { inlineVolume: true });
 
+    await stop();
     player.play(resource);
     player.currentResource = resource;
 }

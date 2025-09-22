@@ -2,6 +2,9 @@ function createFloatingPopup(x = null, y = null, anchorElement = null, args = {}
     let isHorizontal = args.isHorizontal ?? false;
     let destroyOnNew = args.destroyOnNew ?? true;
     let closeOnMouseOut = args.closeOnMouseOut ?? true;
+    let shouldBeOnLeft = args.shouldBeOnLeft ?? false;
+    let specificHoverBoundsTarget = args.specificHoverBoundsTarget ?? null;
+    let isHorizontalFlipped = shouldBeOnLeft;
     // remove any existing floating popup
     if (destroyOnNew) {
         const old = document.querySelector('.floating-popup-container');
@@ -14,22 +17,34 @@ function createFloatingPopup(x = null, y = null, anchorElement = null, args = {}
     // Build popup
     const container = document.createElement('div');
     container.className = 'floating-popup-container';
-    container.style.top = `${y}px`
-    container.style.left = `${x}px`
     container.style.position = 'absolute'
     container.style.zIndex = '990'
     document.body.append(container);
 
-    if (x == null || y == null) positionPopup(container, anchorElement, { 'offsetPx': 2 }, isHorizontal)
+    const hoverRectTarget = specificHoverBoundsTarget ? specificHoverBoundsTarget : container;
+
+    if (x == null || y == null) {
+        positionPopup(container, anchorElement, { 'offsetPx': 2, 'shouldBeOnLeft': shouldBeOnLeft }, isHorizontal)
+    } else {
+        if (shouldBeOnLeft) {
+            container.style.right = `${x}px`
+        } else {
+            container.style.left = `${x}px`
+        }
+        container.style.top = `${y}px`
+    }
 
     const listners = [];
+
+    if (anchorElement) {
+        anchorElement.classList.add("stay-hovered");
+    }
 
     function on(target, event, handler, opts) {
         target.addEventListener(event, handler, opts);
         listners.push({ target, event, handler, opts });
     }
 
-    let isHorizontalFlipped = false;
     function positionPopup(popupEl, anchorElement, opts = {}, isHorizontal) {
         if (anchorElement == null) {
             return false;
@@ -40,25 +55,36 @@ function createFloatingPopup(x = null, y = null, anchorElement = null, args = {}
         let { width: pw, height: ph } = popupEl.getBoundingClientRect();
         const vw = window.innerWidth, vh = window.innerHeight;
 
-        let left = !isHorizontal ? anchorRect.right + offset : anchorRect.left + (anchorRect.width - pw)/2;
-        let top = !isHorizontal ? anchorRect.top : anchorRect.top - ph - offset;
-
-        // flip horizontally if needed due to lack of space
-        if (left + pw > vw) {
-            left = anchorRect.left - pw - offset;
+        if (opts.shouldBeOnLeft) {
+            console.log(anchorRect);
             isHorizontalFlipped = true;
-        }
-        left = Math.max(offset, Math.min(left, vw - pw - offset));
+            let right = vw - anchorRect.right;
+            let top = anchorRect.top;
 
-        // flip vertically if needed due to lack of space
-        if (top + ph > vh) {
-            top = anchorRect.bottom - ph;
-        }
-        top = Math.max(offset, Math.min(top, vh - ph - offset));
+            popupEl.style.right = right;
+            popupEl.style.top = top;
+            popupEl.style.bottom = anchorRect.bottom;
 
-        popupEl.style.left = `${left}px`;
-        popupEl.style.top = `${top}px`
-        return true;
+        } else {
+            let left = !isHorizontal ? anchorRect.right + offset : anchorRect.left + (anchorRect.width - pw)/2;
+            let top = !isHorizontal ? anchorRect.top : anchorRect.top - ph - offset;
+
+            // flip horizontally if needed due to lack of space
+            console.log((left + pw) + "\n" + (vw) + "\n" + (left) + "\n" + pw);
+            if (left + pw > vw) {
+                left = anchorRect.left - pw - offset;
+                isHorizontalFlipped = true;
+            }
+            left = Math.max(offset, Math.min(left, vw - pw - offset));
+
+            // flip vertically if needed due to lack of space
+            if (top + ph > vh) {
+                top = anchorRect.bottom - ph;
+            }
+            top = Math.max(offset, Math.min(top, vh - ph - offset));
+            popupEl.style.left = `${left}px`;
+            popupEl.style.top = `${top}px`
+        }
     }
 
     // “click-outside” teardown
@@ -77,9 +103,9 @@ function createFloatingPopup(x = null, y = null, anchorElement = null, args = {}
         const leftZone = zone + 12; // Left-specific 'grace-zone'. Flip to right side if window is flipped.
         const mx = e.clientX;
         const my = e.clientY;
-        const pr = container.getBoundingClientRect();
-        const ar = anchorElement
-            ? anchorElement.getBoundingClientRect()
+        const pr = container.getBoundingClientRect()
+        const ar = hoverRectTarget
+            ? hoverRectTarget.getBoundingClientRect()
             : null;
 
         // helper: is (mx,my) inside rect expanded by 'zone'?
@@ -110,7 +136,7 @@ function createFloatingPopup(x = null, y = null, anchorElement = null, args = {}
             target.removeEventListener(event, handler, opts);
         }
         listners.length = 0;
-        if (anchorElement) anchorElement.classList.remove('selected');
+        if (anchorElement) anchorElement.classList.remove('stay-hovered');
 
         container.remove();
     }

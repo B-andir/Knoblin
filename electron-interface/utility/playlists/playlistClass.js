@@ -26,27 +26,6 @@ class Playlist {
         SingleFire: 'SingleFire'
     }
 
-    addTrack(track) {
-        this.playlist.push(track);
-        console.log(`Added track "${track.title}" to playlist "${this.name}"`);
-        this.emitPlaylistUpdate();
-    }
-
-    updateTrack(index, options) {
-        return (this.playlist[index] = { ...options });
-    }
-
-    removeTrack(index) {
-        if (index < 0 || index >= this.playlist.length) return;
-        const removed = this.playlist.splice(index, 1)[0];
-        console.log(`Removed track "${removed.title}" from playlist "${this.name}"`);
-        this.emitPlaylistUpdate();
-    }
-
-    getPlaylist() {
-        return this.playlist;
-    }
-
     handleTrackFinished(currentTrack) {
         const currentIndex = this.playlist.indexOf(currentTrack);
 

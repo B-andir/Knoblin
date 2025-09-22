@@ -46,6 +46,8 @@
 //     return moduleContainer;
 // }
 
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
 async function unloadContentModule() {
     if (!window.currentContentModule) return;
     const moduleName = window.currentContentModule;
@@ -122,6 +124,9 @@ async function unloadNavigationModule() {
 async function switchContentModuleAsync(name, data = {}) {
     // 1) unload existing module
     await unloadContentModule()
+
+    // Delay to allow the cache to update
+    delay(20);
     
     // 2) Start loading CSS, HTML, & JS in parallel
     const cssPromise = new Promise((resolve, reject) => {
@@ -136,7 +141,7 @@ async function switchContentModuleAsync(name, data = {}) {
     const htmlPromise = fetch(`modules/content/${name}/${name}.html`).then(r => r.text());
     const scriptPromise = new Promise((resolve, reject) => {
         const script = document.createElement('script');
-        script.src = `modules/content/${name}/${name}.js`;
+        script.src = `modules/content/${name}/${name}.js?${Date.now()}`;
         script.onload = () => resolve();
         script.onerror = () => reject(new Error(`Failed to load script for content module ${name}`));
         document.body.appendChild(script);
@@ -160,6 +165,9 @@ async function switchContentModuleAsync(name, data = {}) {
 async function switchNavigationModuleAsync(name, data = {}) {
     // 1) unload existing module
     await unloadNavigationModule()
+
+    // Delay to allow the cache to update
+    delay(20);
     
     // 2) Start loading CSS, HTML, & JS in parallel
     const cssPromise = new Promise((resolve, reject) => {
@@ -174,7 +182,7 @@ async function switchNavigationModuleAsync(name, data = {}) {
     const htmlPromise = fetch(`modules/navigation/${name}/${name}.html`).then(r => r.text());
     const scriptPromise = new Promise((resolve, reject) => {
         const script = document.createElement('script');
-        script.src = `modules/navigation/${name}/${name}.js`;
+        script.src = `modules/navigation/${name}/${name}.js?${Date.now()}`;
         script.onload = () => resolve();
         script.onerror = () => reject(new Error(`Failed to load script for navigation module ${name}`));
         document.body.appendChild(script);
