@@ -42,6 +42,11 @@ function createWindow() {
         mainWindow.webContents.send('playlists-loaded', { playlists })
     });
 
+    mainWindow.webContents.once('did-finish-load', () => {
+        let playlists = playlistManager.getPlaylists();
+        mainWindow.webContents.send('playlists-loaded', { playlists })
+    });
+
     mainWindow.on('close', () => {
         const bounds = mainWindow.getBounds();
         const display = screen.getDisplayMatching(bounds);

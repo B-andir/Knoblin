@@ -32,7 +32,6 @@ async function updateFrontend() {
         win.webContents.send('playlists-updated', { playlists });
     });
 }
-
 async function savePlaylistsData(sendEvent = true) {
     try {
         await fs.mkdir(path.dirname(dataFilePath), { recursive: true });

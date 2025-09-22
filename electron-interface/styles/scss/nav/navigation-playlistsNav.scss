@@ -6,6 +6,7 @@
     width: 100%;
     height: 99%;
 
+
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -296,7 +297,7 @@
         &:hover {
             color: colors.$secondary;
             cursor: pointer;
-            border-color: lighten(colors.$main, 8);
+            border-color: lighten(colors.$main, 8)
         }
 
         &#playlistActionDeleteButton {

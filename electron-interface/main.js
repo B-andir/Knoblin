@@ -126,8 +126,6 @@ function stopResizingBoth() {
     switchContentModuleAsync('playlist', await window.api.getPlaylist('2ee45d69-f8b8-4a11-a75b-601dcdf9fedc'));
 })();
 
-switchNavigationModuleAsync('playlistsNav');
-
 
 // -----<  Control Bar Functionality  >-----
 

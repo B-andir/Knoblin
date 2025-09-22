@@ -367,6 +367,7 @@
         instance = new PlaylistModule(data);
     };
 
+
     // Cleanup
     window.currentContentModuleCleanup = function cleanupPlaylistModule() {
         console.log("Try cleanup Playlist Module");

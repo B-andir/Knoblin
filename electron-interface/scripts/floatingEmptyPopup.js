@@ -103,7 +103,7 @@ function createFloatingPopup(x = null, y = null, anchorElement = null, args = {}
         const leftZone = zone + 12; // Left-specific 'grace-zone'. Flip to right side if window is flipped.
         const mx = e.clientX;
         const my = e.clientY;
-        const pr = container.getBoundingClientRect();
+        const pr = container.getBoundingClientRect()
         const ar = hoverRectTarget
             ? hoverRectTarget.getBoundingClientRect()
             : null;
