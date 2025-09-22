@@ -285,6 +285,7 @@ setInterval(() => {
 }, 1000);
 
 // Uncomment to turn the example handler on
-// require('./exampleHandler');
+require('./exampleHandler');
 
 openPort();
+console.log("[HARDWARE OK]");
