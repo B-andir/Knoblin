@@ -1,5 +1,3 @@
-const contentContainer = document.getElementById('content');
-
 // -----<  Button Events  >-----
 
 const closeButton = document.getElementById('close-button');
@@ -118,70 +116,8 @@ function stopResizingBoth() {
 
 // -----<  Module Loading/Unloading  >-----
 
-function loadModuleScript(moduleName) {
-    const script = document.createElement('script');
-    script.src = `modules/content/${moduleName}/${moduleName}.js`;
-    script.id = `script-${moduleName}`;
-    script.onload = () => console.log(`${moduleName}.js loaded successfully`);
-    script.onerror = () => console.error(`Error loading ${moduleName}.js`);
-    document.body.appendChild(script);
-    return script;
-}
-
-function loadModuleHTML(moduleName, container) {
-    const moduleContainer = document.createElement('div');
-    moduleContainer.id = `module-${moduleName}`;
-    contentContainer.appendChild(moduleContainer);
-
-    fetch(`modules/content/${moduleName}/${moduleName}.html`)
-        .then(response => {
-            if (!response.ok) throw new Error('Network error');
-            return response.text();
-        })
-        .then(htmlContent => {
-            contentContainer.innerHTML = htmlContent;
-            contentContainer.dispatchEvent(new CustomEvent('module-loaded', { 
-                bubbles: true,
-                detail: moduleName 
-            }));
-        })
-        .catch(err => console.error(`Error loading ${moduleName} HTML:`, err));
-
-    return moduleContainer;
-}
-
-function unloadModule(moduleName) {
-    // Call the cleanup function if it exists
-    if (typeof window.currentModuleCleanup === 'function') {
-        window.currentModuleCleanup();
-        delete window.currentModuleCleanup;
-    }
-
-    // Remove the HTML container.
-    const moduleContainer = document.getElementById(`module-${moduleName}`);
-    if (moduleContainer) {
-      moduleContainer.remove();
-    }
-    
-    // Remove the script element.
-    const script = document.getElementById(`script-${moduleName}`);
-    if (script) {
-      script.remove();
-    }
-}
-
-function switchModule(newModuleName) {
-    if (window.currentModule) {
-        unloadModule(window.currentModule)
-    }
-
-    window.currentModule = newModuleName;
-
-    loadModuleHTML(newModuleName, contentContainer);
-    loadModuleScript(newModuleName);
-}
-
-switchModule('playlist');
+switchContentModuleAsync('playlist');
+switchNavigationModuleAsync('playlistsNav');
 
 
 // -----<  Control Bar Functionality  >-----
@@ -238,6 +174,17 @@ function changeSelectedSection(element) {
     }
 }
 
+
+// -----<  Navigation Bar Functionality  >-----
+
+// Data Get/Send 
+window.api.onPlaylistsLoaded(data => {
+    console.log('Playlists Data Loaded: ', data);
+});
+
+window.api.onPlaylistsUpdated(data => {
+    console.log('Playlists Data Updated: ', data);
+});
 
 // Adjust main volume
 window.api.onBackendEvent('new-volume-main', (data) => {

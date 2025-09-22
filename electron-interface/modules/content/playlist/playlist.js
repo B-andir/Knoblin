@@ -1,6 +1,5 @@
 function loadThisScript() {
-    console.log("Custom Event!");
-    document.removeEventListener('module-loaded', loadThisScript)
+    document.removeEventListener('content-module-loaded', loadThisScript)
     
     const submitUrlButton = document.getElementById('submit-url-button');
     if (submitUrlButton) submitUrlButton.addEventListener('click', handleUrlSubmit);
@@ -21,16 +20,20 @@ function handlePasteClipboard() {
 }
 
 // Check if the module's HTML is already loaded
-if (document.getElementById('submit-url-button')) {
-    loadThisScript();
-} else {
-    // Otherwise, listen for the custom event
-    document.addEventListener('module-loaded', loadThisScript);
-}
+// if (document.getElementById('playlist-module-load-checker')) {
+//     loadThisScript();
+// } else {
+//     // Otherwise, listen for the custom event
+//     document.addEventListener('content-module-loaded', loadThisScript);
+// }
 
-// Cleanup
+// -< Setup >-
 (() => {
-    window.currentModuleCleanup = function cleanupPlaylistModule() {
+    // Init
+    window.initContentPlaylist = loadThisScript;
+
+    // Cleanup
+    window.currentContentModuleCleanup = function cleanupPlaylistModule() {
         // Remove event listners
         const submitUrlButton = document.getElementById('submit-url-button');
         submitUrlButton.removeEventListener('click', handleUrlSubmit);
