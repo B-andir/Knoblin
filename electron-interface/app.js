@@ -35,7 +35,7 @@ function createWindow() {
     });
 
     mainWindow.loadFile(path.join(__dirname, 'main.html'));
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
 
     mainWindow.webContents.once('did-finish-load', () => {
         let playlists = playlistManager.getPlaylists();
