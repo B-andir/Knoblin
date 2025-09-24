@@ -62,7 +62,9 @@ function updatePlaylist(id, args) {
         ...args               // overwrite only the ones provided
         };
         savePlaylistsData();
+        return playlists[index];
     }
+    return null;
 }
 
 function deletePlaylist(id) {

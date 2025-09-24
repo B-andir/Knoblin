@@ -3,11 +3,13 @@
     class PlaylistSettingsModule {
         #listeners = [];
         #data;
+        #savedSettings;
 
         // data = playlist object
         constructor(data) {
             this.#data = data;
-            this.init()
+            this.#savedSettings = {}
+            this.init();
         }
 
         init(_data = null) {
@@ -19,12 +21,19 @@
 
             const data = this.#data;
 
-            const reload = this.#reload;
-
-            document.getElementById("fname").value = data.name;
+            const nameInput = document.getElementById('fname');
+            nameInput.value = data.name;
             const colorIcon = document.getElementById('circleIcon');
+            if (data.color === null) {
+                data.color = "#00000000";
+            }
+            
             colorIcon.style.backgroundColor = data.color;
 
+            const layerInput = document.getElementById('flayer');
+            layerInput.value = data.layer;
+
+            // Color selection
             this.#on(colorIcon, 'click', async (e) => {
                     const el = e.target.closest('.playlistIcon');
                     if (!el) return;
@@ -32,6 +41,8 @@
                     const popup = createFloatingPopup(null, null, el, { destroyOnNew: false, closeOnMouseOut: false });
         
                     popup.container.classList.add('playlistIconPopup');
+
+                    const setNewColor = this.#setNewColor;
         
                     updateColorSelection();
         
@@ -79,9 +90,10 @@
                                 el.style.setProperty('--bg', el.dataset.bgcolor);
         
                                 popup.on(el, 'click', e => {
-                                    window.api.setPlaylistColor(data.id, el.dataset.bgcolor);
+                                    // window.api.setPlaylistColor(data.id, el.dataset.bgcolor);
+                                    setNewColor(el.dataset.bgcolor);
                                     popup.destroy();
-                                    reload();
+                                    // reload();
                                 });
         
                                 popup.on(el, 'contextmenu', e => {
@@ -155,6 +167,30 @@
         
             });
 
+            // -- Form input event listeners
+
+            this.#on(nameInput, 'input', this.#handleInputChange);
+            this.#on(layerInput, 'input', this.#handleInputChange);
+
+            // -- Form Submit
+            const form = document.getElementById('settingsForm');
+            this.#on(form, 'submit', async (e) => {
+                e.preventDefault();
+
+                if (Object.keys(this.#savedSettings).length === 0) {
+                    console.log('No changes to submit');
+                    return;
+                }
+
+                let playlist = await window.api.setPlaylistSettings(this.#data.id, this.#savedSettings)
+                if (playlist) {
+                    console.log('Playlist settings saved! Reloading...');
+                    switchContentModuleAsync('playlistSettings', playlist);
+                } else {
+                    console.warn('Could not save playlist settings');
+                }
+            });
+
             console.log("PlaylistSettings Module has been loaded");
         }
         
@@ -165,6 +201,23 @@
 
         #off(target, event, handler, opts) {
             target.removeEventListener(event, handler, opts);
+        }
+
+        parseValue(input) {
+            const numValue = Number(input);
+            return isNaN(numValue) ? input : numValue;
+        }
+
+        #handleInputChange = (event) => {
+            const element = event.target;
+            const settingSection = element.closest('.settingSection');
+            const fieldName = element.name;
+            const key = fieldName;
+
+            let value = this.parseValue(element.value);
+
+            let newSetting = { key, value }
+            this.#newSetting(settingSection, newSetting)
         }
 
         cleanup() {
@@ -181,17 +234,32 @@
             // Cleanup global variables
             this.#listeners = [];
             this.#data = null;
+            this.#savedSettings = null;
             
             console.log('PlaylistSettings module has been cleaned up.')
 
             return true;
         }
 
-        #reload = async () => {
-            const _id = this.#data.id;
-            this.cleanup();
-            let data = await window.api.getPlaylist(_id)
-            this.init(data);
+        #newSetting(settingSection, setting) {
+            if (this.#data[setting.key] === setting.value) {
+                settingSection.classList.remove("hasNew");
+                delete this.#savedSettings[setting.key];
+                return;
+            }
+
+            settingSection.classList.add("hasNew");
+
+            this.#savedSettings[setting.key] = setting.value;
+        }
+
+        #setNewColor = (newColor) => {
+            const colorIcon = document.getElementById('circleIcon');
+
+            // this.#savedSettings.color = newColor;
+            let newSetting = { 'key': 'color', 'value': newColor}
+            this.#newSetting(document.getElementById('colorSection'), newSetting)
+            colorIcon.style.backgroundColor = newColor;
         }
     }
 

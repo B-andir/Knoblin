@@ -1,0 +1,52 @@
+@use 'sass:color';
+@use '../colors';
+
+#content-playlistSettings {
+    overflow: hidden;
+
+    #playlistSettingsHeader {
+        margin-left: 2%;
+    }
+
+    form {
+        display: flex;
+        gap: 1.2rem;
+        flex-direction: column;
+        width: 96%;
+        padding-left: 2%;
+
+        .settingSection {
+            display: flex;
+            gap: 3rem;
+            height: 1.3rem;
+
+            label {
+                display: block;
+                width: 50px;
+            }
+
+            &.hasNew {
+                label::after {
+                    content: '*';
+                    color: colors.$contrast;
+                }
+            }
+        }
+
+        #submit {
+            position: absolute;
+            bottom: 10px;
+            left: 2%;
+            right: 2%;
+        }
+
+    }
+
+    #circleIcon {
+        aspect-ratio: 1 / 1;
+        height: 100%;
+        width: auto;
+        border: 1px solid gray;
+    }
+
+}
