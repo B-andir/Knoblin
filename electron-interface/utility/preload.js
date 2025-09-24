@@ -23,6 +23,8 @@ contextBridge.exposeInMainWorld('api', {
 
     deletePlaylist: (id) => ipcRenderer.send('delete-playlist', id),
 
+    duplicatePlaylist: (id, name) => ipcRenderer.send('duplicate-playlist', { id, name }),
+
     savePlaylistsOrder: (newOrder) => ipcRenderer.send('reorder-playlists', newOrder),
 
     getPlaylistColors: () => {

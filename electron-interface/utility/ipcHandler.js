@@ -68,8 +68,8 @@ module.exports = { setupIPCs: (window) => {
     });
 
     ipcMain.on('duplicate-playlist', async (event, data) => {
-        
-    })
+        playlistManager.duplicatePlaylist(data.id, data.name);
+    });
 
     ipcMain.on('delete-playlist', async (event, id) => {
         playlistManager.deletePlaylist(id);
