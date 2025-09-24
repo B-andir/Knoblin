@@ -39,6 +39,10 @@ contextBridge.exposeInMainWorld('api', {
 
     setPlaylistColor: (id, newColor) => ipcRenderer.send('set-playlist-color', { id, newColor }),
 
+    setPlaylistSettings: (id, changedSettings) => {
+        return ipcRenderer.invoke('set-playlist-settings', {id, changedSettings})
+    },
+
     // ----< Playlist Actions >----
 
     addSongToPlaylist: async (songUrl, playlistId) => {

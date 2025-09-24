@@ -1,0 +1,26 @@
+<div id="content-playlistSettings">
+    <h2 id="playlistSettingsHeader">Settings</h2>
+
+    <form id="settingsForm">
+        <div class="settingSection" id="nameSection">
+            <label for="fname">Name</label>
+            <input type="text" id="fname" name="name"><br>
+        </div>
+        <div class="settingSection" id="colorSection">
+            <label for="fcolor">Color</label>
+            <div class="playlistIcon" id="fcolor" name="color">
+                <div class="circleIcon" id="circleIcon" style="background-color: hotpink"></div>
+            </div>
+        </div>
+        <div class="settingSection" id="layerSection">
+            <label for="flayer">Layer</label>
+            <select id="flayer" name="layer">
+                <option value=0>Music</option>
+                <option value=1>Ambiance</option>
+                <option value=2>Sfx</option>
+            </select>
+        </div>
+        
+        <input type="submit" id="submit" name="submit" value="Save Settings">
+    </form>
+</div>

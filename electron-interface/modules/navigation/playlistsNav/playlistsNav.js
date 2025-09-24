@@ -286,7 +286,7 @@
                             </div>
                         </div>
                     `;
-        
+                    
                     const renameBtn = popup.container.querySelector('#playlistActionRenameButton');
                     const duplicateBtn = popup.container.querySelector('#playlistActionDuplicateButton');
                     const settingsBtn = popup.container.querySelector('#playlistActionSettingsButton');
@@ -302,6 +302,12 @@
                     
         
                     popup.on(renameBtn, 'click', onRenameBtnClicked);
+
+                    popup.on(settingsBtn, 'click', async e => {
+                        newSelectedPlaylist(entry);
+                        switchContentModuleAsync('playlistSettings', await window.api.getPlaylist(entry.id));
+                    });
+
                     popup.on(deleteBtn, 'click', e => {
                         if (document.querySelector('.confirmDeleteMenu')) return;
                         const menu = createFloatingPopup(e.pageX, e.pageY, deleteBtn, { destroyOnNew: false });
@@ -321,10 +327,7 @@
                 const playlistName = entry.querySelector('.playlistName');
                 this.#on(playlistName, 'click', async e => {
                     console.log("Try load playlist content");
-                    const prev = document.querySelector('.playlistEntry.selected');
-                    if (prev) prev.classList.remove('selected');
-        
-                    entry.classList.add('selected');
+                    newSelectedPlaylist(entry);
         
                     switchContentModuleAsync('playlist', await window.api.getPlaylist(entry.id));
                 });
@@ -344,7 +347,15 @@
                     }
                 }
             })
+
+            const newSelectedPlaylist = (selected) => {
+                const prev = document.querySelector('.playlistEntry.selected');
+                if (prev) prev.classList.remove('selected');
+
+                selected.classList.add('selected');
+            }
         }
+
         
         handleNewPlaylistButtonClicked(e) {
             showFloatingInput(e.pageX, e.pageY, null, value => {

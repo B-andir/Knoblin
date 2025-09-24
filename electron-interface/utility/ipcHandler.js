@@ -111,6 +111,10 @@ module.exports = { setupIPCs: (window) => {
         playlistManager.updatePlaylist(data.id, { color: data.newColor });
     });
 
+    ipcMain.handle('set-playlist-settings', async (event, data) => {
+        return playlistManager.updatePlaylist(data.id, data.changedSettings);
+    });
+
     // ----< Playlist Actions >----
     
     ipcMain.handle('add-song-to-playlist', async (event, data) => {
