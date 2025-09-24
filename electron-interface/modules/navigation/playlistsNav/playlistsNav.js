@@ -299,7 +299,12 @@
                         });
                     }
         
-                    
+                    function onDuplicateBtnClicked(e) {
+                        showFloatingInput(e.pageX, e.pageY, playlist.name + " Copy", value => {
+                            window.api.duplicatePlaylist(popup.anchor.id, value);
+                            popup.destroy();
+                        });
+                    }
         
                     popup.on(renameBtn, 'click', onRenameBtnClicked);
 
@@ -307,6 +312,8 @@
                         newSelectedPlaylist(entry);
                         switchContentModuleAsync('playlistSettings', await window.api.getPlaylist(entry.id));
                     });
+
+                    popup.on(duplicateBtn, 'click', onDuplicateBtnClicked);
 
                     popup.on(deleteBtn, 'click', e => {
                         if (document.querySelector('.confirmDeleteMenu')) return;
