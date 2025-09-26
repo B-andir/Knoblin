@@ -87,5 +87,5 @@ async function clientLogin() {
 
 // ----- EXPORTS -----
 
-module.exports = { clientLogin };
+module.exports = { clientLogin, client };
 exports.client = client;
