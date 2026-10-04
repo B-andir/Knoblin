@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { connectToEventServer } = require('event-client-lib');
+const { ytdlpUpdater } = require('./utility/music/ytdlpUpdater')
 
 const { Client, GatewayIntentBits, Collection, Events, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const audioPlayer = require('./utility/audio-player.js');
@@ -30,6 +31,7 @@ client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
     
 	connectToEventServer('DiscordBot');
+	ytdlpUpdater.checkAndUpdate({ reason: 'launch' });
     audioPlayer.joinVoice(process.env.VOICE_CHANNEL_ID, process.env.GUILD_ID, true);
 });
 

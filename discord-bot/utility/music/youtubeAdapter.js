@@ -1,6 +1,8 @@
 const { spawn } = require('child_process');
 const { EventEmitter } = require('events');
 const { demuxProbe } = require('@discordjs/voice');
+const { ytdlpUpdater } = require('./ytdlpUpdater');
+const fs = require('fs');
 const path = require('path');
 
 class YoutubeAdapter extends EventEmitter {
@@ -11,6 +13,7 @@ class YoutubeAdapter extends EventEmitter {
     }
 
     async #executeYtDlpCommand(args) {
+        await ytdlpUpdater.whenReady();
         return new Promise((resolve, reject) => {
             const process = spawn(this.ytdlpPath, args);
             let stdout = '';
@@ -188,18 +191,50 @@ class YoutubeAdapter extends EventEmitter {
     }
 
     async #createYtDlptream(url, opts = {}) {
-        const args = [
-            // '-f', 'bestaudio[acodec=opus]/bestaudio/best',
-            '-f', 'bestaudio[ext=m4a]/bestaudio[ext=webm]/bestaudio/best',
-            '-o', '-',
-            '--no-playlist',
-            '--quiet',
-            '--no-part',
-            '--no-progress',
-            '--no-warnings',
-            '--no-write-info-json',
-            '--buffer-size', '2048',
-        ];
+        // await ytdlpUpdater.whenReady();
+        
+        const audioFormat = opts.audioFormat ?? 'ogg';
+
+        let args;
+        if (opts.download) {
+            args = [
+                '-f', 'bestaudio[ext=webm]/bestaudio[ext=m4a]/bestaudio/best',
+                '-o', path.resolve(__dirname, '../../../downloads/%(title).50s.%(ext)s'),
+                '--restrict-filenames',
+                '--ffmpeg-location', this.ffmpegPath,
+                opts.playlist ? '--yes-playlist' : '--no-playlist',
+                '--quiet',
+                '--no-progress',
+                '--no-warnings',
+                '--no-simulate',
+                '--print', 'after_move:filepath',
+                '--no-write-info-json',
+                '--no-continue',
+                '--force-overwrites',
+                '--max-filesize', '1G',
+                '--buffer-size', '2048',
+            ];
+
+            if (audioFormat === 'ogg') {
+                args.push('--remux-video', 'ogg');
+            } else if (audioFormat) {
+                args.push('-x', '--audio-format', audioFormat, '--audio-quality', '5');
+            }
+        } else {
+            args = [
+                // '-f', 'bestaudio[acodec=opus]/bestaudio/best',
+                '-f', 'bestaudio[ext=m4a]/bestaudio[ext=webm]/bestaudio/best',
+                '-o', '-',
+                '--no-playlist',
+                '--quiet',
+                '--no-part',
+                '--no-progress',
+                '--no-warnings',
+                '--no-write-info-json',
+                '--max-filesize', '1G',
+                '--buffer-size', '2048',
+            ];
+        }
         
         if (opts.cookies) args.push('--cookies', opts.cookies);
     
@@ -247,6 +282,7 @@ class YoutubeAdapter extends EventEmitter {
             'pipe:1'
         ];
         
+        
         const ff = spawn(this.ffmpegPath, args, {
             stdio: ['pipe', 'pipe', 'pipe'],
             windowsHide: true,
@@ -260,9 +296,55 @@ class YoutubeAdapter extends EventEmitter {
         return ff;
     }
 
-    async createStream(url, opts = {}) {
+    #revealInExplorer(filePath) {
+        try {
+            if (process.platform === 'win32') {
+                // Explorer wants the literal command line `explorer.exe /select,"C:\path\file.ogg"`.
+                // Node's default arg escaping would quote the whole `/select,...` token and
+                // Explorer would open Documents instead, so build it verbatim.
+                spawn('explorer.exe', [`/select,"${path.normalize(filePath)}"`], {
+                    windowsVerbatimArguments: true,
+                    detached: true,
+                    stdio: 'ignore'
+                }).unref();
+            } else if (process.platform === 'darwin') {
+                spawn('open', ['-R', filePath], { detached: true, stdio: 'ignore' }).unref();
+            } else {
+                spawn('xdg-open', [path.dirname(filePath)], { detached: true, stdio: 'ignore' }).unref();
+            }
+        } catch (err) {
+            console.warn(`[reveal] could not open file manager: ${err.message}`);
+        }
+    }
 
+    async createStream(url, opts = {}) {
         const ytdlp = await this.#createYtDlptream(url, opts);
+
+        if (opts.download) {
+            let printed = '';
+            ytdlp.stdout.on('data', d => { printed += d.toString(); });
+
+            return new Promise((resolve, reject) => {
+                ytdlp.on('error', reject);
+                ytdlp.on('close', (code) => {
+                    if (code !== 0) return reject(new Error(`yt-dlp exited ${code}`));
+
+                    const files = printed.split('\n').map(l => l.trim()).filter(Boolean);
+
+                    if (opts.reveal !== false) {
+                        if (files.length) {
+                            this.#revealInExplorer(files[0])
+                        } else {
+                            // Fallback: no path captured, just open the downloads folder
+                            this.#revealInExplorer(path.resolve(__dirname, '../../downloads'));
+                        }
+                    }
+
+                    resolve({ files });
+                })
+            });
+        }
+
         const ffmpeg = await this.#createFfmpegStream(opts);
 
         ytdlp.stdout.pipe(ffmpeg.stdin);

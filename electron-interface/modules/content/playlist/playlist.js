@@ -1,4 +1,10 @@
 // === Class Definition ===
+const SPINNER_SVG = `
+    <svg class="spinner" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor"
+                stroke-width="2.5" stroke-linecap="round" stroke-dasharray="40 57"/>
+    </svg>`;
+
 (() => {
     class PlaylistModule {
         #listeners = [];
@@ -7,6 +13,7 @@
         #scrolAnimId;
         #postscrollAnimId;
         #currentlySelectedCard;
+        #busy = false;
 
         constructor(data) {
             this.#data = data;
@@ -78,10 +85,61 @@
         }
 
         async handleUrlSubmit() {
+            if (this.#busy) return;
+
+            const button = document.getElementById('submit-url-button');
             const inputField = document.getElementById('url-input');
-            const newPlaylist = await window.api.addSongToPlaylist(inputField.value, this.#data.id);
-            this.#data = newPlaylist;
-            this.BuildPlaylistContent();
+            const url = inputField.value.trim();
+            if (!url) return;
+
+            const originalIcon = button.innerHTML;
+            this.#busy = true;
+            button.disabled = true;
+            button.classList.add('busy');
+            button.innerHTML = SPINNER_SVG;
+
+            let ok = true;
+            try {
+                const mode = this.#data.download === true ? 'auto' : this.#data.download;
+
+                if (mode && mode !== 'off') {
+                    const hasList = /[?&]list=/.test(url);
+                    const hasVideo = /[?&]v=|youtu\.be\//.test(url);
+                    const asPlaylist =
+                        mode === 'playlist' ? hasList :
+                        mode === 'song'     ? false :
+                                            hasList && !hasVideo;
+
+                    const result = asPlaylist
+                        ? await window.api.downloadThisPlaylist(url)
+                        : await window.api.downloadThisSong(url);
+
+                    ok = result?.success !== false;
+                    if (!ok) {
+                        console.error('Download failed:', result?.error);
+                        
+                        button.classList.add('error');
+                        setTimeout(() => button.classList.remove('error'), 1500);
+                    }
+                } else {
+                    const newPlaylist = await window.api.addSongToPlaylist(url, this.#data.id);
+                    this.#data = newPlaylist;
+                    this.BuildPlaylistContent();
+                }
+            } catch (err) {
+                ok = false;
+                console.error('URL submit failed:', err);
+            } finally {
+                this.#busy = false;
+                button.disabled = false;
+                button.classList.remove('busy');
+                button.innerHTML = originalIcon;
+
+                if (!ok) {
+                    button.classList.add('error');
+                    setTimeout(() => button.classList.remove('error'), 1500);
+                }
+            }
         }
 
         async handlePasteClipboard() {
@@ -97,7 +155,7 @@
             if (event.key === "Enter") {
                 event.preventDefault();
                 console.log("Enter pressed! Submit url");
-                handleUrlSubmit();
+                this.handleUrlSubmit();
             }
         }
 
@@ -239,7 +297,11 @@
                         }
 
                         const StartPlayingSong = () => {
-                            window.api.playSong(el.dataset.index, this.#data.id);
+                            if (this.#data.download) {
+                                window.api.downloadSong(el.dataset.index, this.#data.id);
+                            } else {
+                                window.api.playSong(el.dataset.index, this.#data.id);
+                            }
                         }
                         
                         if (el == this.#currentlySelectedCard) {

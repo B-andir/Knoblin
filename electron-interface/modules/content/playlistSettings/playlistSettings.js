@@ -33,6 +33,9 @@
             const layerInput = document.getElementById('flayer');
             layerInput.value = data.layer;
 
+            const downloadInput = document.getElementById('fdownload');
+            downloadInput.value = data.download === true ? 'auto' : (data.download || 'off');
+
             // Color selection
             this.#on(colorIcon, 'click', async (e) => {
                     const el = e.target.closest('.playlistIcon');
@@ -171,6 +174,7 @@
 
             this.#on(nameInput, 'input', this.#handleInputChange);
             this.#on(layerInput, 'input', this.#handleInputChange);
+            this.#on(downloadInput, 'input', this.#handleInputChange);
 
             // -- Form Submit
             const form = document.getElementById('settingsForm');
@@ -214,7 +218,13 @@
             const fieldName = element.name;
             const key = fieldName;
 
-            let value = this.parseValue(element.value);
+            let value;
+
+            if (element.type === 'checkbox') {
+                value = element.checked;
+            } else {
+                value = this.parseValue(element.value);
+            }
 
             let newSetting = { key, value }
             this.#newSetting(settingSection, newSetting)
