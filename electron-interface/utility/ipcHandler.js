@@ -1,8 +1,28 @@
 const { app, ipcMain, BrowserWindow } = require('electron')
 const playlistManager = require('./playlists/playlistManager');
 const colorManager = require('./playlists/colorManager');
+const { randomUUID } = require('crypto');
 const ytdl = require('@distube/ytdl-core');
 const events = require('event-client-lib');
+
+const pendingDownloads = new Map();
+
+function requestDownload(eventName, payload, timeoutMs = 30 * 60 * 1000) {
+    const requestId = randomUUID();
+    return new Promise((resolve) => {
+        const timer = setTimeout(() => {
+            pendingDownloads.delete(requestId);
+            resolve({ success: false, error: 'Timed out waiting for the bot' });
+        }, timeoutMs);
+
+        pendingDownloads.set(requestId, (result) => {
+            clearTimeout(timer);
+            resolve(result);
+        })
+
+        events.emit(eventName, { ...payload, requestId });
+    })
+}
 
 module.exports = { setupIPCs: (window) => {
 
@@ -145,8 +165,39 @@ module.exports = { setupIPCs: (window) => {
 
         events.emit('playSong', { song, GUILD_ID: process.env.GUILD_ID });
     });
+
+    ipcMain.handle('download-song-from-playlist', async (event, data) => {
+        const song = await playlistManager.getSongByIndex(data.songIndex, data.playlistId);
+        return (requestDownload('downloadSong', { song }));
+    });
+
+    ipcMain.handle('download-song', async (event, data) => {
+        return (requestDownload('downloadSong', { song: { url: data.songUrl } }));
+    });
+
+    ipcMain.handle('download-playlist', async (event, data) => {
+        return (requestDownload('downloadPlaylist', { url: data.url }));
+    });
+
     
 
+    ipcMain.on('ytdlp-update-request', (event, opts) => {
+        events.emit('ytdlp-update-request', { force: !!opts?.force });
+    });
+
+    ipcMain.on('ytdlp-status-request', () => events.emit('ytdlp-status-request'));
+
+    events.on('ytdlp-update-status', (data) => {
+        window.webContents.send('ytdlp-update-status', data);
+    })
+
+    events.on('downloadFinished', (data) => {
+        const done = pendingDownloads.get(data.requestId);
+        if (!done) return;
+        pendingDownloads.delete(data.requestId);
+        done(data);
+    })
+    
 
     // ----<  Control Bar  >----
     

@@ -3,6 +3,10 @@
 @use '../colors';
 $buttonSize: 2.4rem;
 
+@keyframes url-button-spin {
+    to { transform: rotate(360deg); }
+}
+
 #content {
     display: flex;
     align-items: center;
@@ -69,10 +73,20 @@ $buttonSize: 2.4rem;
                 height: calc($buttonSize * 0.6);
             }
 
+            &.busy,
             &:hover {
                 cursor: pointer;
                 background-color: rgba(color.adjust(colors.$main, $lightness: -10%), 0.8);
                 color: rgba(colors.$contrast, 0.8);
+
+                svg.spinner {
+                    animation: url-button-spin 0.9s linear infinite;
+                }
+            }
+
+            &.error {
+                color: #d9534f;
+                transition: color 115ms ease-in-out;
             }
         }
     }

@@ -62,6 +62,18 @@ contextBridge.exposeInMainWorld('api', {
     playSong: async (songIndex, playlistId) => {
         return ipcRenderer.invoke('play-song-from-playlist', {songIndex, playlistId});
     },
+
+    downloadSong: async (songIndex, playlistId) => {
+        return ipcRenderer.invoke('download-song-from-playlist', { songIndex, playlistId });
+    },
+
+    downloadThisSong: (songUrl) => ipcRenderer.invoke('download-song', { songUrl }),
+
+    downloadThisPlaylist: (playlistUrl) => ipcRenderer.invoke('download-playlist', { url: playlistUrl }),
+
+    updateYtDlp: () => ipcRenderer.send('ytdlp-update-request', { force: true }),
+
+    requestYtDlpStatus: () => ipcRenderer.send('ytdlp-status-request'),
     
     Menu,
 });

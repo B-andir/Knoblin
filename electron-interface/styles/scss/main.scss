@@ -64,6 +64,15 @@ body {
             }
         }
 
+        #ytdlp-update-button {
+            font-size: 0.6rem;
+            color: color.adjust(colors.$main, $lightness: 15%);
+
+            &:hover {
+                color: color.adjust(colors.$main, $lightness: 25%);
+            }
+        }
+
         #close-button:hover {
             background-color: #ff0000b3;
         }
@@ -156,14 +165,14 @@ body {
     position: absolute;
     z-index: 1000;
     display: flex;
-    background: $main;
-    border: 1px solid $contrast;
+    background: colors.$main;
+    border: 1px solid colors.$contrast;
     border-radius: 4px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 
     input {
         font-size: 1rem;
-        color: $secondary;
+        color: colors.$secondary;
         padding: 4px 8px;
         border: none;
         outline: none;
@@ -173,7 +182,7 @@ body {
 
     button {
         font-size: 1rem;
-        color: $contrast;
+        color: colors.$contrast;
         padding: 4px 8px;
         border: none;
         outline: none;

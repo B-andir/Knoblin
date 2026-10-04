@@ -22,6 +22,16 @@ const pinButtonEvent = pinButton.addEventListener('click', async (event) => {
     }
 });
 
+const ytdlpButton = document.getElementById('ytdlp-update-button');
+const ytdlpButtonEvent = ytdlpButton.addEventListener('click', () => window.api.updateYtDlp());
+
+window.api.onBackendEvent('ytdlp-update-status', (status) => {
+    ytdlpButton.title = status.message ?? status.state;
+    ytdlpButton.disabled = status.state === 'checking' || status.state === 'downloading';
+})
+
+window.api.requestYtDlpStatus();
+
 
 // -----<  Vertical Resize (Nav Panel)  >-----
 
